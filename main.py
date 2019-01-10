@@ -43,11 +43,12 @@ class mfcc_analysis(QG.QMainWindow):
         self.w_data0.resize(100, 100)
         self.le_data0 = QG.QLineEdit(self)
         self.btn_data0 = QG.QPushButton('...')
+        self.btn_data0.setFixedWidth(25)
         self.btn_data0.clicked.connect(self.get_data)
-        self.vbox_data0 = QG.QVBoxLayout()
-        self.vbox_data0.addWidget(self.le_data0)
-        self.vbox_data0.addWidget(self.btn_data0)
-        self.w_data0.setLayout(self.vbox_data0)
+        self.hbox_data0= QG.QHBoxLayout()
+        self.hbox_data0.addWidget(self.le_data0)
+        self.hbox_data0.addWidget(self.btn_data0)
+        self.w_data0.setLayout(self.hbox_data0)
 
 
         # widget rd0
@@ -87,7 +88,7 @@ class mfcc_analysis(QG.QMainWindow):
 
 
     def get_data(self):
-        data = QG.QFileDialog.getOpenFileName(self, 'Open File', '/home')
+        data = QG.QFileDialog.getOpenFileName(self, 'Open File', '/home/')
         self.le_data0.setText(data)
 
     def plot(self):
