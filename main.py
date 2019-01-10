@@ -17,10 +17,13 @@ class mfcc_analysis(QG.QMainWindow):
         self.w_scatterV = []
         self.le_scatterV = []
         self.vbox_scatterV = []
+        self.hbox_scatterV0 = []
         self.w_plot_scatterV = []
         self.p0_scatterV = []
         self.plot_scatterV = []
         self.btn_scatterV = []
+        self.cb_scatterV0 = []
+        self.cb_scatterV1 = []
 
         # constracta
         super(mfcc_analysis, self).__init__(parent)  # superclassのコンストラクタを使用。
@@ -128,10 +131,16 @@ class mfcc_analysis(QG.QMainWindow):
         self.btn_scatterV.append(QG.QPushButton('hello', self.w_scatterV[id]))
         self.btn_scatterV[id].clicked.connect(lambda : self.plot_scatter(id))
         self.le_scatterV.append(QG.QLineEdit('id = ' + str(id)))
+        self.cb_scatterV0.append(QG.QComboBox())
+        self.cb_scatterV1.append(QG.QComboBox())
 
         # layout
+        self.hbox_scatterV0.append(QG.QHBoxLayout())
+        self.hbox_scatterV0[id].addWidget(self.cb_scatterV0[id])
+        self.hbox_scatterV0[id].addWidget(self.cb_scatterV1[id])
         self.vbox_scatterV.append(QG.QVBoxLayout())
         self.vbox_scatterV[id].addWidget(self.w_plot_scatterV[id])
+        self.vbox_scatterV[id].addLayout(self.hbox_scatterV0[id])
         self.vbox_scatterV[id].addWidget(self.le_scatterV[id])
         self.vbox_scatterV[id].addWidget(self.btn_scatterV[id])
         self.w_scatterV[id].setLayout(self.vbox_scatterV[id])
