@@ -12,11 +12,22 @@ import pickle
 
 class mfcc_analysis(QG.QMainWindow):
     def __init__(self, parent=None):
-        # app = QG.QApplication(sys.argv)
+        self.scatter = -1
+        self.w_scatterV = []
+
+        # constracta
         super(mfcc_analysis, self).__init__(parent)  # superclassのコンストラクタを使用。
         self.resize(1000, 700)
         self.move(200, 200)
 
+        # tool bar
+        self.add_scatter = QG.QAction(QG.QIcon('./icon_file/plus_icon2.png'), 'scatter', self)
+        self.add_scatter.triggered.connect(self.show_scatter)
+        self.toolbar = self.addToolBar("")
+        self.toolbar.addAction(self.add_scatter)
+
+
+        # multi window
         self.mdi = QG.QMdiArea(self)
         self.setCentralWidget(self.mdi)
 
@@ -53,37 +64,32 @@ class mfcc_analysis(QG.QMainWindow):
         self.mdi.addSubWindow(self.w_plot)
 
 
-        #
-        # label
-        # self.lbl0 = QG.QLabel(self)
-        # self.lbl0.setText('hello')
-        #
-        # button
-        # self.btn0 = QG.QPushButton('play')
-        # self.btn0.setFixedWidth(60)
-        # self.btn0.clicked.connect(self.play)
 
-        # # layout
-        # self.vbox0 = QG.QVBoxLayout()
-        # self.vbox0.addWidget(self.w_plot)
-        # self.vbox0.addWidget(self.lbl0)
-        # self.vbox0.addWidget(self.btn0)
-        # self.w.setLayout(self.vbox0)
-        self.plot()
+        # self.plot()
 
     def plot(self):
         print(self.group0.checkedId())
         feat0 = self.group0.checkedId()
-        feat_path = '/home/fkubota/Project/ALSOK/data/稲成ビルFeat/kubota/feat_正常音.pkl'
-        with open(feat_path, mode='rb') as f:
-            feat = pickle.load(f)
+        # feat_path = '/home/fkubota/Project/ALSOK/data/稲成ビルFeat/kubota/feat_正常音.pkl'
+        # with open(feat_path, mode='rb') as f:
+        #     feat = pickle.load(f)
 
 
-        self.scatter0.setPoints(feat[::100, 15], feat[::100, feat0*10])
+        # self.scatter0.setPoints(feat[::100, 15], feat[::100, feat0*10])
 
 
 
 
+    def show_scatter(self):
+        self.scatter += 1
+        self.w_scatterV.append(QG.QWidget())
+        self.mdi.addSubWindow(self.w_scatterV[self.scatter])
+
+        self.btn = QG.QPushButton('hello', self.w_scatterV[self.scatter])
+        self.vbox_scatter0 = QG.QVBoxLayout()
+        self.vbox_scatter0.addWidget(self.btn)
+        self.w_scatterV[self.scatter].setLayout(self.vbox_scatter0)
+        self.w_scatterV[self.scatter].show()
 
 
 
