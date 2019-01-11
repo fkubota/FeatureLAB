@@ -79,9 +79,12 @@ class mfcc_analysis(QG.QMainWindow):
     def get_data(self):
         # data_path = QG.QFileDialog.getOpenFileName(self, 'Open File', '/home/')
         data_path = '/home/fkubota/Project/ALSOK/data/稲成ビルFeat/kubota/feat_正常音.pkl'
+        data_path = '/home/fkubota/Project/Yokogawa/data/feat/徳山201809/mfcc-0502/Yokogawa_mfcc-0502_20180831_085430.pkl'
         self.le_data0.setText(data_path)
         with open(data_path, mode='rb') as f:
             self.feat = pickle.load(f)
+        self.feat = self.feat['data']
+
 
 
 
