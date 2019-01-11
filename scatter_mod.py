@@ -27,7 +27,7 @@ class scatter_mod(QG.QWidget):
         # graph
         self.w_plot_scatter = pg.GraphicsWindow()
         self.p0_scatter = self.w_plot_scatter.addPlot()
-        self.plot_scatter = pg.ScatterPlotItem(pen=(None), brush=(225, 225, 0, 20))
+        self.plot_scatter = pg.ScatterPlotItem(pen=(None), brush=(225, 225, 0, 40))
         self.p0_scatter.addItem(self.plot_scatter)
 
         # self.w_plot = pg.GraphicsWindow()
@@ -38,7 +38,8 @@ class scatter_mod(QG.QWidget):
         # widget
         self.btn_scatter = QG.QPushButton('plot', self)
         # self.btn_scatter.clicked.connect(lambda : self.plot_scatter(id))
-        self.le_scatter = (QG.QLineEdit('id = '))
+        self.lbl_scatter0 = QG.QLabel('step')
+        self.le_scatter0 = (QG.QLineEdit(str(100)))
         self.cb_scatter0 = QG.QComboBox()
         self.cb_scatter0.addItems(feat_name)
         self.cb_scatter1 = QG.QComboBox()
@@ -48,10 +49,13 @@ class scatter_mod(QG.QWidget):
         self.hbox_scatter0 = QG.QHBoxLayout()
         self.hbox_scatter0.addWidget(self.cb_scatter0)
         self.hbox_scatter0.addWidget(self.cb_scatter1)
+        self.hbox_scatter1 = QG.QHBoxLayout()
+        self.hbox_scatter1.addWidget(self.lbl_scatter0)
+        self.hbox_scatter1.addWidget(self.le_scatter0)
         self.vbox_scatter0 = QG.QVBoxLayout()
         self.vbox_scatter0.addWidget(self.w_plot_scatter)
         self.vbox_scatter0.addLayout(self.hbox_scatter0)
-        self.vbox_scatter0.addWidget(self.le_scatter)
+        self.vbox_scatter0.addLayout(self.hbox_scatter1)
         self.vbox_scatter0.addWidget(self.btn_scatter)
         self.setLayout(self.vbox_scatter0)
         self.show()

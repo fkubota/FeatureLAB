@@ -60,7 +60,6 @@ class mfcc_analysis(QG.QMainWindow):
         self.group0.addButton(self.rd0, 0)
         self.group0.addButton(self.rd1, 1)
         self.group0.addButton(self.rd2, 2)
-        self.group0.buttonClicked.connect(self.plot)
         self.rd0.setChecked(True)
         self.vbox0 = QG.QVBoxLayout()
         self.vbox0.addWidget(self.rd0)
@@ -68,19 +67,9 @@ class mfcc_analysis(QG.QMainWindow):
         self.vbox0.addWidget(self.rd2)
         self.w0.setLayout(self.vbox0)
 
-
-
-        # グラフウィンドウ
-        self.w_plot = pg.GraphicsWindow()
-        self.w_plot.resize(300,300)
-        self.p0 = self.w_plot.addPlot()
-        self.scatter0 = pg.ScatterPlotItem(pen=(None), brush=(225, 225, 0, 20))
-        self.p0.addItem(self.scatter0)
-
         #layout
         self.mdi.addSubWindow(self.w_data0)
         self.mdi.addSubWindow(self.w0)
-        self.mdi.addSubWindow(self.w_plot)
 
 
         # self.plot()
@@ -95,38 +84,31 @@ class mfcc_analysis(QG.QMainWindow):
             self.feat = pickle.load(f)
 
 
-    def plot(self, id):
-        w_scatter = self.w_scatterV[id]
-        w_scatter.plot_scatter.setPoints(self.feat[::100, 15], self.feat[::100, 10])
-
-        # self.scatter0.setPoints(feat[::100, 15], feat[::100, feat0*10])
-
-
-
 
     def show_scatter(self):
 
         self.scatter += 1
-        self.w_scatterV.append(sctr.scatter_mod())
+        self.w_scatterV.append(sctr.scatter_mod(self))
         w_scatter = self.w_scatterV[len(self.w_scatterV) -1]
         w_scatter.id = self.scatter
-        w_scatter.btn_scatter.clicked.connect(lambda : self.plot(w_scatter.id))
+        w_scatter.btn_scatter.clicked.connect(lambda : self.plot_scatter(w_scatter.id))
+        w_scatter.cb_scatter0.currentIndexChanged.connect(lambda :self.plot_scatter(w_scatter.id))
+        w_scatter.cb_scatter1.currentIndexChanged.connect(lambda :self.plot_scatter(w_scatter.id))
+        w_scatter.le_scatter0.editingFinished.connect(lambda :self.plot_scatter(w_scatter.id))
         # for feat in self.feat_names:
-
 
         self.mdi.addSubWindow(w_scatter)
         w_scatter.show()
 
 
-
-
-
-
     def plot_scatter(self, id):
-        self.le_scatterV[id].setText('id = ' + str(id))
+        w_scatter = self.w_scatterV[id]
+        step = int(w_scatter.le_scatter0.text())
+        feat0 = self.feat[::step, int(w_scatter.cb_scatter0.currentIndex())]
+        feat1 = self.feat[::step, int(w_scatter.cb_scatter1.currentIndex())]
+        w_scatter.plot_scatter.setPoints(feat0, feat1)
 
-
-
+        # self.scatter0.setPoints(feat[::100, 15], feat[::100, feat0*10])
 
 
 def main():
