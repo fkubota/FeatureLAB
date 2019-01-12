@@ -8,22 +8,18 @@ import PyQt4.QtGui as QG
 import PyQt4.QtCore as QC
 import pyqtgraph as pg
 import pickle
-
+import scatter_mod as sctr
 
 class mfcc_analysis(QG.QMainWindow):
     def __init__(self, parent=None):
+        self.feat_names = ['zcr','energy','energy_entropy','spectral_centroid','spectral_spread','spectral_entropy','spectral_flux','spectral_rolloff',
+                            'mfcc_1','mfcc_2','mfcc_3','mfcc_4','mfcc_5','mfcc_6','mfcc_7','mfcc_8','mfcc_9','mfcc_10','mfcc_11','mfcc_12','mfcc_13',
+                            'chroma_1','chroma_2','chroma_3','chroma_4','chroma_5','chroma_6','chroma_7','chroma_8','chroma_9','chroma_10','chroma_11','chroma_12','chroma_std']
+
+
         # scatter
         self.scatter = -1
         self.w_scatterV = []
-        self.le_scatterV = []
-        self.vbox_scatterV = []
-        self.hbox_scatterV0 = []
-        self.w_plot_scatterV = []
-        self.p0_scatterV = []
-        self.plot_scatterV = []
-        self.btn_scatterV = []
-        self.cb_scatterV0 = []
-        self.cb_scatterV1 = []
 
         # constracta
         super(mfcc_analysis, self).__init__(parent)  # superclassのコンストラクタを使用。
@@ -64,7 +60,6 @@ class mfcc_analysis(QG.QMainWindow):
         self.group0.addButton(self.rd0, 0)
         self.group0.addButton(self.rd1, 1)
         self.group0.addButton(self.rd2, 2)
-        self.group0.buttonClicked.connect(self.plot)
         self.rd0.setChecked(True)
         self.vbox0 = QG.QVBoxLayout()
         self.vbox0.addWidget(self.rd0)
@@ -72,86 +67,51 @@ class mfcc_analysis(QG.QMainWindow):
         self.vbox0.addWidget(self.rd2)
         self.w0.setLayout(self.vbox0)
 
-
-
-        # グラフウィンドウ
-        self.w_plot = pg.GraphicsWindow()
-        self.w_plot.resize(300,300)
-        self.p0 = self.w_plot.addPlot()
-        self.scatter0 = pg.ScatterPlotItem(pen=(None), brush=(225, 225, 0, 20))
-        self.p0.addItem(self.scatter0)
-
         #layout
         self.mdi.addSubWindow(self.w_data0)
         self.mdi.addSubWindow(self.w0)
-        self.mdi.addSubWindow(self.w_plot)
 
 
         # self.plot()
+        self.get_data()
 
 
     def get_data(self):
-        data = QG.QFileDialog.getOpenFileName(self, 'Open File', '/home/')
-        self.le_data0.setText(data)
-
-    def plot(self):
-        print(self.group0.checkedId())
-        feat0 = self.group0.checkedId()
-        # feat_path = '/home/fkubota/Project/ALSOK/data/稲成ビルFeat/kubota/feat_正常音.pkl'
-        # with open(feat_path, mode='rb') as f:
-        #     feat = pickle.load(f)
-
-
-        # self.scatter0.setPoints(feat[::100, 15], feat[::100, feat0*10])
+        # data_path = QG.QFileDialog.getOpenFileName(self, 'Open File', '/home/')
+        data_path = '/home/fkubota/Project/ALSOK/data/稲成ビルFeat/kubota/feat_正常音.pkl'
+        data_path = '/home/fkubota/Project/Yokogawa/data/feat/徳山201809/mfcc-0502/Yokogawa_mfcc-0502_20180831_085430.pkl'
+        self.le_data0.setText(data_path)
+        with open(data_path, mode='rb') as f:
+            self.feat = pickle.load(f)
+        self.feat = self.feat['data']
 
 
 
 
     def show_scatter(self):
+
         self.scatter += 1
-        id = self.scatter
-        self.w_scatterV.append(QG.QWidget())
-        self.w_scatterV[id].resize(300, 500)
-        self.w_scatterV[id].setWindowTitle("hello"+str(id))
-        self.mdi.addSubWindow(self.w_scatterV[id])
+        self.w_scatterV.append(sctr.scatter_mod(self))
+        w_scatter = self.w_scatterV[len(self.w_scatterV) -1]
+        w_scatter.id = self.scatter
+        w_scatter.btn_scatter.clicked.connect(lambda : self.plot_scatter(w_scatter.id))
+        w_scatter.cb_scatter0.currentIndexChanged.connect(lambda :self.plot_scatter(w_scatter.id))
+        w_scatter.cb_scatter1.currentIndexChanged.connect(lambda :self.plot_scatter(w_scatter.id))
+        w_scatter.le_scatter0.editingFinished.connect(lambda :self.plot_scatter(w_scatter.id))
+        # for feat in self.feat_names:
 
-
-        # graph
-        self.w_plot_scatterV.append(pg.GraphicsWindow())
-        self.p0_scatterV.append(self.w_plot_scatterV[id].addPlot())
-        self.plot_scatterV.append(pg.ScatterPlotItem(pen=(None), brush=(225, 225, 0, 20)))
-        self.p0_scatterV[id].addItem(self.plot_scatterV[id])
-
-        # self.w_plot = pg.GraphicsWindow()
-        # self.p0 = self.w_plot.addPlot()
-        # self.plot_scatter = pg.ScatterPlotItem(pen=(None), brush=(225, 225, 0, 20))
-        # self.p0.addItem(self.scatter0)
-
-        # widget
-        self.btn_scatterV.append(QG.QPushButton('hello', self.w_scatterV[id]))
-        self.btn_scatterV[id].clicked.connect(lambda : self.plot_scatter(id))
-        self.le_scatterV.append(QG.QLineEdit('id = ' + str(id)))
-        self.cb_scatterV0.append(QG.QComboBox())
-        self.cb_scatterV1.append(QG.QComboBox())
-
-        # layout
-        self.hbox_scatterV0.append(QG.QHBoxLayout())
-        self.hbox_scatterV0[id].addWidget(self.cb_scatterV0[id])
-        self.hbox_scatterV0[id].addWidget(self.cb_scatterV1[id])
-        self.vbox_scatterV.append(QG.QVBoxLayout())
-        self.vbox_scatterV[id].addWidget(self.w_plot_scatterV[id])
-        self.vbox_scatterV[id].addLayout(self.hbox_scatterV0[id])
-        self.vbox_scatterV[id].addWidget(self.le_scatterV[id])
-        self.vbox_scatterV[id].addWidget(self.btn_scatterV[id])
-        self.w_scatterV[id].setLayout(self.vbox_scatterV[id])
-        self.w_scatterV[id].show()
+        self.mdi.addSubWindow(w_scatter)
+        w_scatter.show()
 
 
     def plot_scatter(self, id):
-        self.le_scatterV[id].setText('id = ' + str(id))
+        w_scatter = self.w_scatterV[id]
+        step = int(w_scatter.le_scatter0.text())
+        feat0 = self.feat[::step, int(w_scatter.cb_scatter0.currentIndex())]
+        feat1 = self.feat[::step, int(w_scatter.cb_scatter1.currentIndex())]
+        w_scatter.plot_scatter.setPoints(feat0, feat1)
 
-
-
+        # self.scatter0.setPoints(feat[::100, 15], feat[::100, feat0*10])
 
 
 def main():
