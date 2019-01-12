@@ -27,7 +27,8 @@ class data_browser(QG.QWidget):
         self.table.horizontalHeader().setResizeMode(0, QG.QHeaderView.Stretch)
         self.table.setColumnCount(1)
         self.table.setHorizontalHeaderLabels(['path'])
-        self.table.setColumnWidth(0,200)
+        header = self.table.horizontalHeader()
+        header.setResizeMode(0, QG.QHeaderView.Stretch)
 
         self.vbox= QG.QVBoxLayout()
         self.vbox.addWidget(self.table)

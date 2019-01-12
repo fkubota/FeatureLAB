@@ -3,12 +3,14 @@ MFCC_analysis
 """
 
 import sys
+import os
 import numpy as np
 import PyQt4.QtGui as QG
 import PyQt4.QtCore as QC
 import pyqtgraph as pg
 import pickle
 import scatter_mod as sctr
+import data_browser as db
 
 class mfcc_analysis(QG.QMainWindow):
     def __init__(self, parent=None):
@@ -16,10 +18,14 @@ class mfcc_analysis(QG.QMainWindow):
                             'mfcc_1','mfcc_2','mfcc_3','mfcc_4','mfcc_5','mfcc_6','mfcc_7','mfcc_8','mfcc_9','mfcc_10','mfcc_11','mfcc_12','mfcc_13',
                             'chroma_1','chroma_2','chroma_3','chroma_4','chroma_5','chroma_6','chroma_7','chroma_8','chroma_9','chroma_10','chroma_11','chroma_12','chroma_std']
 
-
         # scatter
         self.scatter = -1
         self.w_scatterV = []
+
+        # data_browser
+        self.data_id = -1
+        self.dataV = []
+        self.data_basenameV = []
 
         # constracta
         super(mfcc_analysis, self).__init__(parent)  # superclassのコンストラクタを使用。
@@ -42,17 +48,8 @@ class mfcc_analysis(QG.QMainWindow):
         self.setCentralWidget(self.mdi)
 
         # data browser
-        self.w_data0 = QG.QWidget(self)
-        self.w_data0.resize(100, 100)
-        self.le_data0 = QG.QLineEdit(self)
-        self.btn_data0 = QG.QPushButton('...')
-        self.btn_data0.setFixedWidth(25)
-        self.btn_data0.clicked.connect(self.get_data)
-        self.hbox_data0= QG.QHBoxLayout()
-        self.hbox_data0.addWidget(self.le_data0)
-        self.hbox_data0.addWidget(self.btn_data0)
-        self.w_data0.setLayout(self.hbox_data0)
-
+        self.data_browser = db.data_browser(self)
+        self.data_browser.btn_data0.clicked.connect(self.get_data)
 
         # widget rd0
         self.w0 = QG.QWidget(self)
@@ -72,7 +69,7 @@ class mfcc_analysis(QG.QMainWindow):
         self.w0.setLayout(self.vbox0)
 
         #layout
-        self.mdi.addSubWindow(self.w_data0)
+        self.mdi.addSubWindow(self.data_browser)
         self.mdi.addSubWindow(self.w0)
 
 
@@ -81,14 +78,22 @@ class mfcc_analysis(QG.QMainWindow):
 
 
     def get_data(self):
+        self.data_id += 1
         # data_path = QG.QFileDialog.getOpenFileName(self, 'Open File', '/home/')
         # data_path = '/home/fkubota/Project/ALSOK/data/稲成ビルFeat/kubota/feat_正常音.pkl'
         # data_path = '/home/fkubota/Project/Yokogawa/data/feat/徳山201809/mfcc-0502/Yokogawa_mfcc-0502_20180831_085430.pkl'
-        data_path = '/home/fkubota/MyData/030_GoogleDrive/Python/pyfile/my_APP/MFCC_analysis/data/sample.pkl'
-        self.le_data0.setText(data_path)
-        with open(data_path, mode='rb') as f:
+        self.data_path = '/home/fkubota/MyData/030_GoogleDrive/Python/pyfile/my_APP/MFCC_analysis/data/sample.pkl'
+        with open(self.data_path, mode='rb') as f:
             self.feat = pickle.load(f)
         self.feat = self.feat['data']
+        self.dataV.append(self.feat)
+        self.data_basenameV.append(os.path.basename(self.data_path))
+        self.data_browser.table.setRowCount(self.data_id+1)
+        self.data_browser.table.setItem(0, self.data_id, QG.QTableWidgetItem(self.data_path))
+
+        self.update_scatter_cb()
+
+
 
 
 
@@ -99,6 +104,7 @@ class mfcc_analysis(QG.QMainWindow):
         self.w_scatterV.append(sctr.scatter_mod(self))
         w_scatter = self.w_scatterV[len(self.w_scatterV) -1]
         w_scatter.id = self.scatter
+        w_scatter.setWindowTitle('scatter: ' + str(w_scatter.id))
         w_scatter.btn_scatter.clicked.connect(lambda : self.plot_scatter(w_scatter.id))
         w_scatter.cb_scatter0.currentIndexChanged.connect(lambda :self.plot_scatter(w_scatter.id))
         w_scatter.cb_scatter1.currentIndexChanged.connect(lambda :self.plot_scatter(w_scatter.id))
@@ -106,6 +112,7 @@ class mfcc_analysis(QG.QMainWindow):
         # for feat in self.feat_names:
 
         self.mdi.addSubWindow(w_scatter)
+        self.update_scatter_cb()
         w_scatter.show()
 
 
@@ -116,7 +123,13 @@ class mfcc_analysis(QG.QMainWindow):
         feat1 = self.feat[::step, int(w_scatter.cb_scatter1.currentIndex())]
         w_scatter.plot_scatter.setPoints(feat0, feat1)
 
-        # self.scatter0.setPoints(feat[::100, 15], feat[::100, feat0*10])
+    def update_scatter_cb(self):
+        for idx in range(len(self.w_scatterV)):
+            self.w_scatterV[idx].cb_scatter2.clear()
+            self.w_scatterV[idx].cb_scatter2.addItems(self.data_basenameV)
+            self.w_scatterV[idx].cb_scatter2.update()
+
+
 
 
 def main():
