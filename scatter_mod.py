@@ -26,8 +26,11 @@ class scatter_mod(QG.QWidget):
 
         # graph
         self.w_plot_scatter = pg.GraphicsWindow()
+        self.w_plot_scatter.resize(300, 200)
+        self.w_plot_scatter.setBackground('#FFFFFF00')
         self.p0_scatter = self.w_plot_scatter.addPlot()
-        self.plot_scatter = pg.ScatterPlotItem(pen=(None), brush=(225, 225, 0, 40))
+        self.p0_scatter.showGrid(x=True, y=True, alpha=0.7)
+        self.plot_scatter = pg.ScatterPlotItem(pen=(None), brush=(225,0, 0, 40))
         self.p0_scatter.addItem(self.plot_scatter)
 
         # self.w_plot = pg.GraphicsWindow()

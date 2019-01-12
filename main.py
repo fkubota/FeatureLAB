@@ -23,14 +23,18 @@ class mfcc_analysis(QG.QMainWindow):
 
         # constracta
         super(mfcc_analysis, self).__init__(parent)  # superclassのコンストラクタを使用。
-        self.resize(1000, 700)
-        self.move(200, 200)
+        self.setWindowTitle('MFCC analysis')
+        self.resize(1000, 500)
+        self.move(200, 100)
 
         # tool bar
         self.add_scatter = QG.QAction(QG.QIcon('./icon_file/plus_icon2.png'), 'scatter', self)
         self.add_scatter.triggered.connect(self.show_scatter)
         self.toolbar = self.addToolBar("")
         self.toolbar.addAction(self.add_scatter)
+
+        # statusbar
+        self.statusBar().showMessage('Ready')
 
 
         # multi window
@@ -78,8 +82,9 @@ class mfcc_analysis(QG.QMainWindow):
 
     def get_data(self):
         # data_path = QG.QFileDialog.getOpenFileName(self, 'Open File', '/home/')
-        data_path = '/home/fkubota/Project/ALSOK/data/稲成ビルFeat/kubota/feat_正常音.pkl'
-        data_path = '/home/fkubota/Project/Yokogawa/data/feat/徳山201809/mfcc-0502/Yokogawa_mfcc-0502_20180831_085430.pkl'
+        # data_path = '/home/fkubota/Project/ALSOK/data/稲成ビルFeat/kubota/feat_正常音.pkl'
+        # data_path = '/home/fkubota/Project/Yokogawa/data/feat/徳山201809/mfcc-0502/Yokogawa_mfcc-0502_20180831_085430.pkl'
+        data_path = '/home/fkubota/MyData/030_GoogleDrive/Python/pyfile/my_APP/MFCC_analysis/data/sample.pkl'
         self.le_data0.setText(data_path)
         with open(data_path, mode='rb') as f:
             self.feat = pickle.load(f)
