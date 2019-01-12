@@ -20,7 +20,6 @@ class scatter_mod(QG.QWidget):
     def __init__(self, parent=None):
         super(scatter_mod, self).__init__(parent)  # superclassのコンストラクタを使用。
         self.resize(100, 200)
-        self.setWindowTitle("hello")
         # self.mdi.addSubWindow(self.w_scatter)
 
 
@@ -39,7 +38,7 @@ class scatter_mod(QG.QWidget):
         # self.p0.addItem(self.scatter0)
 
         # widget
-        self.btn_scatter = QG.QPushButton('plot', self)
+        self.btn_scatter = QG.QPushButton('update', self)
         # self.btn_scatter.clicked.connect(lambda : self.plot_scatter(id))
         self.lbl_scatter0 = QG.QLabel('step')
         self.le_scatter0 = (QG.QLineEdit(str(100)))

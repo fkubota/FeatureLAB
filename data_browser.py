@@ -21,22 +21,18 @@ class data_browser(QG.QWidget):
         super(data_browser, self).__init__(parent)  # superclassのコンストラクタを使用。
         self.setWindowTitle("Data Browser")
 
-        self.le_data0 = QG.QLineEdit(self)
-        self.btn_data0 = QG.QPushButton('...')
-        self.btn_data0.setFixedWidth(25)
-        self.btn_data0.clicked.connect(self.get_data)
-        self.hbox_data0= QG.QHBoxLayout()
-        self.hbox_data0.addWidget(self.le_data0)
-        self.hbox_data0.addWidget(self.btn_data0)
-        self.w_data0.setLayout(self.hbox_data0)
+        self.btn_data0 = QG.QPushButton('add Data')
 
+        self.table = QG.QTableWidget()
+        self.table.horizontalHeader().setResizeMode(0, QG.QHeaderView.Stretch)
+        self.table.setColumnCount(1)
+        self.table.setHorizontalHeaderLabels(['path'])
+        self.table.setColumnWidth(0,200)
 
-
-
-
-
-
-
+        self.vbox= QG.QVBoxLayout()
+        self.vbox.addWidget(self.table)
+        self.vbox.addWidget(self.btn_data0)
+        self.setLayout(self.vbox)
 
 
 
