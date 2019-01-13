@@ -62,26 +62,9 @@ class mfcc_analysis(QG.QMainWindow):
         self.data_browser = db.data_browser(self)
         self.data_browser.btn_data0.clicked.connect(self.get_data)
 
-        # widget rd0
-        self.w0 = QG.QWidget(self)
-        self.w0.resize(100,100)
-        self.rd0 = QG.QRadioButton('feat0')
-        self.rd1 = QG.QRadioButton('feat1')
-        self.rd2 = QG.QRadioButton('feat2')
-        self.group0 = QG.QButtonGroup(self)
-        self.group0.addButton(self.rd0, 0)
-        self.group0.addButton(self.rd1, 1)
-        self.group0.addButton(self.rd2, 2)
-        self.rd0.setChecked(True)
-        self.vbox0 = QG.QVBoxLayout()
-        self.vbox0.addWidget(self.rd0)
-        self.vbox0.addWidget(self.rd1)
-        self.vbox0.addWidget(self.rd2)
-        self.w0.setLayout(self.vbox0)
 
         #layout
         self.mdi.addSubWindow(self.data_browser)
-        self.mdi.addSubWindow(self.w0)
 
 
         # self.plot()
@@ -109,8 +92,11 @@ class mfcc_analysis(QG.QMainWindow):
         self.feat = self.feat['data']
         self.dataV.append(self.feat)
         self.data_basenameV.append(os.path.basename(self.data_path))
-        self.data_browser.table.setRowCount(self.data_id+1)
-        self.data_browser.table.setItem(0, self.data_id, QG.QTableWidgetItem(self.data_path))
+        # self.data_browser.table.setRowCount(self.data_id+1)
+        # self.data_browser.table.setItem(0, self.data_id, QG.QTableWidgetItem(self.data_path))
+        self.item = QG.QStandardItem(self.data_path)
+        self.data_browser.model.appendRow(self.item)
+
 
         self.update_scatter_cb_edited()
 

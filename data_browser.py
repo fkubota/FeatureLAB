@@ -23,15 +23,19 @@ class data_browser(QG.QWidget):
 
         self.btn_data0 = QG.QPushButton('add Data')
 
-        self.table = QG.QTableWidget()
-        self.table.horizontalHeader().setResizeMode(0, QG.QHeaderView.Stretch)
-        self.table.setColumnCount(1)
-        self.table.setHorizontalHeaderLabels(['path'])
-        header = self.table.horizontalHeader()
-        header.setResizeMode(0, QG.QHeaderView.Stretch)
+        # self.table = QG.QTableWidget()
+        # self.table.horizontalHeader().setResizeMode(0, QG.QHeaderView.Stretch)
+        # self.table.setColumnCount(1)
+        # self.table.setHorizontalHeaderLabels(['path'])
+        # header = self.table.horizontalHeader()
+        # header.setResizeMode(0, QG.QHeaderView.Stretch)
+
+        self.lv = QG.QListView()
+        self.model = QG.QStandardItemModel(self.lv)
+        self.lv.setModel(self.model)
 
         self.vbox= QG.QVBoxLayout()
-        self.vbox.addWidget(self.table)
+        self.vbox.addWidget(self.lv)
         self.vbox.addWidget(self.btn_data0)
         self.setLayout(self.vbox)
 

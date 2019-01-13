@@ -32,8 +32,6 @@ class scatter_mod(QG.QWidget):
         self.w_plot_scatter.setBackground('#FFFFFF00')
         self.p0_scatter = self.w_plot_scatter.addPlot()
         self.p0_scatter.showGrid(x=True, y=True, alpha=0.7)
-        # self.plot_scatter = pg.ScatterPlotItem(pen=(None), brush=(225,0, 0, 40))
-        # self.p0_scatter.addItem(self.plot_scatter)
 
         # widget
         self.btn0 = QG.QPushButton('add Plot')
@@ -74,7 +72,7 @@ class scatter_mod(QG.QWidget):
         self.tab_new.btn_color.clicked.connect(self.setting_update)
 
         # plotitem
-        self.tab_new.plot_scatter = pg.ScatterPlotItem(pen=(None), brush=(225,0, 0, 40))
+        self.tab_new.plot_scatter = pg.ScatterPlotItem(pen=(None), brush=(225,0, 0, 40), name="tab : " + str(id))
         self.p0_scatter.addItem(self.tab_new.plot_scatter)
 
         # update combobox
@@ -114,7 +112,6 @@ class w_tab(QG.QWidget):
         self.cb_scatter1 = QG.QComboBox()
         self.cb_scatter1.addItems(feat_name)
         self.cb_scatter2 = QG.QComboBox()
-        # self.cb_scatter2.setFixedWidth(200)
 
         self.hbox_scatter0 = QG.QHBoxLayout()
         self.hbox_scatter0.addWidget(self.cb_scatter0)
