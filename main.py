@@ -4,6 +4,7 @@ MFCC_analysis
 
 import sys
 import os
+import psutil
 import numpy as np
 import PyQt4.QtGui as QG
 import PyQt4.QtCore as QC
@@ -27,7 +28,7 @@ class mfcc_analysis(QG.QMainWindow):
         self.dataV = []
         self.data_basenameV = []
 
-        # constracta
+        # constructor
         super(mfcc_analysis, self).__init__(parent)  # superclassのコンストラクタを使用。
         self.setWindowTitle('MFCC analysis')
         self.resize(1000, 500)
@@ -40,8 +41,18 @@ class mfcc_analysis(QG.QMainWindow):
         self.toolbar.addAction(self.add_scatter)
 
         # statusbar
-        self.statusBar().showMessage('Ready')
+        self.mem = psutil.virtual_memory()
+        mem0 = self.mem.total/10**9
+        mem1 = self.mem.used/10**9
+        self.statusBar().showMessage('memory: {}/{} GB'.format(mem1, mem0))
+        self.pbur = QG.QProgressBar()
+        self.pbur.setFixedHeight(10)
+        self.statusBar().addPermanentWidget(self.pbur)
 
+        # timer
+        self.timer = QC.QTimer(self)
+        self.timer.timeout.connect(self.timer_event)
+        self.timer.start(500)
 
         # multi window
         self.mdi = QG.QMdiArea(self)
@@ -77,6 +88,16 @@ class mfcc_analysis(QG.QMainWindow):
         self.get_data()
 
 
+    def timer_event(self):
+        self.mem = psutil.virtual_memory()
+        mem0 = self.mem.total/10**9
+        mem1 = self.mem.used/10**9
+        self.statusBar().showMessage('memory: {:.3f}/{:.3f} GB'.format(mem1, mem0))
+        # self.statusBar().showMessage()
+        self.pbur.setValue(mem1/mem0* 100)
+        self.repaint()
+
+
     def get_data(self):
         self.data_id += 1
         # data_path = QG.QFileDialog.getOpenFileName(self, 'Open File', '/home/')
@@ -91,45 +112,55 @@ class mfcc_analysis(QG.QMainWindow):
         self.data_browser.table.setRowCount(self.data_id+1)
         self.data_browser.table.setItem(0, self.data_id, QG.QTableWidgetItem(self.data_path))
 
-        self.update_scatter_cb()
-
-
-
+        self.update_scatter_cb_edited()
 
 
 
     def show_scatter(self):
-
         self.scatter += 1
         self.w_scatterV.append(sctr.scatter_mod(self))
         w_scatter = self.w_scatterV[len(self.w_scatterV) -1]
         w_scatter.id = self.scatter
         w_scatter.setWindowTitle('scatter: ' + str(w_scatter.id))
-        w_scatter.btn_scatter.clicked.connect(lambda : self.plot_scatter(w_scatter.id))
-        w_scatter.cb_scatter0.currentIndexChanged.connect(lambda :self.plot_scatter(w_scatter.id))
-        w_scatter.cb_scatter1.currentIndexChanged.connect(lambda :self.plot_scatter(w_scatter.id))
-        w_scatter.le_scatter0.editingFinished.connect(lambda :self.plot_scatter(w_scatter.id))
-        # for feat in self.feat_names:
+
+        # overload method
+        w_scatter.setting_update = self.setting_update_edited
+        w_scatter.change_color = self.change_color_edited
+        w_scatter.update_scatter_cb = self.update_scatter_cb_edited
 
         self.mdi.addSubWindow(w_scatter)
-        self.update_scatter_cb()
+        w_scatter.add_data()
+        self.update_scatter_cb_edited()
         w_scatter.show()
 
+    def setting_update_edited(self):
+        tab = self.sender().parent()
+        scatter = tab.plot_scatter
+        id = tab.id
+        step = int(tab.le_scatter0.text())
+        feat0 = self.feat[::step, int(tab.cb_scatter0.currentIndex())]
+        feat1 = self.feat[::step, int(tab.cb_scatter1.currentIndex())]
+        scatter.setPoints(feat0, feat1, brush=tab.color+'32')
 
-    def plot_scatter(self, id):
-        w_scatter = self.w_scatterV[id]
-        step = int(w_scatter.le_scatter0.text())
-        feat0 = self.feat[::step, int(w_scatter.cb_scatter0.currentIndex())]
-        feat1 = self.feat[::step, int(w_scatter.cb_scatter1.currentIndex())]
-        w_scatter.plot_scatter.setPoints(feat0, feat1)
-
-    def update_scatter_cb(self):
-        for idx in range(len(self.w_scatterV)):
-            self.w_scatterV[idx].cb_scatter2.clear()
-            self.w_scatterV[idx].cb_scatter2.addItems(self.data_basenameV)
-            self.w_scatterV[idx].cb_scatter2.update()
+    def change_color_edited(self):
+        btn = self.sender()
+        tab = self.sender().parent()
+        color = QG.QColorDialog.getColor()
+        tab.color = color.name()
+        btn.setStyleSheet("background-color: "+ tab.color)
 
 
+    def update_scatter_cb_edited(self):
+        for scatter_idx in range(len(self.w_scatterV)):
+            w_scatter = self.w_scatterV[scatter_idx]
+            for tab_idx in range(len(w_scatter.tabV)):
+                w_scatter.tabV[tab_idx].cb_scatter2.clear()
+                w_scatter.tabV[tab_idx].cb_scatter2.addItems(self.data_basenameV)
+                w_scatter.tabV[tab_idx].cb_scatter2.update()
+
+            # self.w_scatterV[idx].cb_scatter2.clear()
+            # self.w_scatterV[idx].cb_scatter2.addItems(self.data_basenameV)
+            # self.w_scatterV[idx].cb_scatter2.update()
 
 
 def main():
