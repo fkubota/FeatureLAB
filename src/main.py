@@ -5,13 +5,11 @@ MFCC_analysis
 import sys
 import os
 import psutil
-import numpy as np
 import PyQt4.QtGui as QG
 import PyQt4.QtCore as QC
-import pyqtgraph as pg
 import pickle
-import scatter_mod as sctr
-import data_browser as db
+from src import data_browser as db, scatter_mod as sctr
+
 
 class mfcc_analysis(QG.QMainWindow):
     def __init__(self, parent=None):
