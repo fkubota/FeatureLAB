@@ -4,6 +4,7 @@ MFCC_analysis
 
 import sys
 import os
+script_path = os.path.dirname(os.path.abspath(__file__))
 import psutil
 import PyQt4.QtGui as QG
 import PyQt4.QtCore as QC
@@ -33,7 +34,7 @@ class mfcc_analysis(QG.QMainWindow):
         self.move(200, 100)
 
         # tool bar
-        self.add_scatter = QG.QAction(QG.QIcon('./icon_file/plus_icon2.png'), 'scatter', self)
+        self.add_scatter = QG.QAction(QG.QIcon(script_path+'/../icon_file/plus_icon2.png'), 'scatter', self)
         self.add_scatter.triggered.connect(self.show_scatter)
         self.toolbar = self.addToolBar("")
         self.toolbar.addAction(self.add_scatter)

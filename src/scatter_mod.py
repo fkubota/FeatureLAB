@@ -135,6 +135,7 @@ def main():
     app = QG.QApplication(sys.argv)
 
     ui =scatter_mod()
+    ui.add_data()
     # ui = w_tab()
     ui.show()
 
