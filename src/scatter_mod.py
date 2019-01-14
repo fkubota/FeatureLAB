@@ -7,6 +7,7 @@ import numpy as np
 import PyQt4.QtGui as QG
 import PyQt4.QtCore as QC
 import pyqtgraph as pg
+pg.setConfigOption('antialias', True)
 import pickle
 
 
@@ -20,6 +21,8 @@ class scatter_mod(QG.QWidget):
     def __init__(self, parent=None):
         self.tabV = []
         self.tab_id = -1
+        ###
+        self.lastClicked = []
 
         super(scatter_mod, self).__init__(parent)  # superclassのコンストラクタを使用。
         self.resize(100, 200)
@@ -70,13 +73,27 @@ class scatter_mod(QG.QWidget):
         self.tab_new.le_scatter0.editingFinished.connect(self.setting_update)
         self.tab_new.btn_color.clicked.connect(self.change_color)
         self.tab_new.btn_color.clicked.connect(self.setting_update)
+        self.tab_new.check.stateChanged.connect(self.setting_update)
 
         # plotitem
         self.tab_new.plot_scatter = pg.ScatterPlotItem(pen=(None), brush=(225,0, 0, 40), name="tab : " + str(id))
         self.p0_scatter.addItem(self.tab_new.plot_scatter)
+        self.tab_new.plot_scatter.sigClicked.connect(self.clicked)
 
         # update combobox
         self.update_scatter_cb()
+
+    def clicked(self, plot, points):
+        print(points[0].pos())
+        for p in self.lastClicked:
+            p.resetPen()
+        for p in points:
+            p.setPen('b', width=2)
+        self.lastClicked = points
+
+
+
+
 
     def setting_update(self):
         pass
@@ -112,12 +129,16 @@ class w_tab(QG.QWidget):
         self.cb_scatter1 = QG.QComboBox()
         self.cb_scatter1.addItems(feat_name)
         self.cb_scatter2 = QG.QComboBox()
+        self.cb_scatter2.setSizePolicy(QG.QSizePolicy.Expanding, 20)
+        self.check = QG.QCheckBox()
+        self.check.setChecked(True)
 
         self.hbox_scatter0 = QG.QHBoxLayout()
+        self.hbox_scatter0.addWidget(self.btn_color)
         self.hbox_scatter0.addWidget(self.cb_scatter0)
         self.hbox_scatter0.addWidget(self.cb_scatter1)
         self.hbox_scatter1 = QG.QHBoxLayout()
-        self.hbox_scatter1.addWidget(self.btn_color)
+        self.hbox_scatter1.addWidget(self.check)
         self.hbox_scatter1.addWidget(self.lbl_scatter1)
         self.hbox_scatter1.addWidget(self.cb_scatter2)
         self.hbox_scatter1.addWidget(self.lbl_scatter0)

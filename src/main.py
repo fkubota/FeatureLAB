@@ -50,9 +50,12 @@ class mfcc_analysis(QG.QMainWindow):
         self.mem = psutil.virtual_memory()
         mem0 = self.mem.total/10**9
         mem1 = self.mem.used/10**9
-        self.statusBar().showMessage('memory: {}/{} GB'.format(mem1, mem0))
+        # self.statusBar().showMessage('memory: {}/{} GB'.format(mem1, mem0), QC.Qt.AlignRight)
         self.pbur = QG.QProgressBar()
         self.pbur.setFixedHeight(10)
+        self.lbl_status = QG.QLabel()
+        self.lbl_status.setText('memory: {}/{} GB'.format(mem1, mem0))
+        self.statusBar().addPermanentWidget(self.lbl_status)
         self.statusBar().addPermanentWidget(self.pbur)
 
         # timer
@@ -71,14 +74,15 @@ class mfcc_analysis(QG.QMainWindow):
         #layout
         self.mdi.addSubWindow(self.data_browser)
 
-        self.get_data()
+        # self.get_data()
 
 
     def timer_event(self):
         self.mem = psutil.virtual_memory()
         mem0 = self.mem.total/10**9
         mem1 = self.mem.used/10**9
-        self.statusBar().showMessage('memory: {:.3f}/{:.3f} GB'.format(mem1, mem0))
+        # self.statusBar().showMessage('memory: {:.3f}/{:.3f} GB'.format(mem1, mem0), QC.Qt.AlignRight)
+        self.lbl_status.setText('memory: {:.3f}/{:.3f} GB'.format(mem1, mem0))
         # self.statusBar().showMessage()
         self.pbur.setValue(mem1/mem0* 100)
         self.repaint()
@@ -86,10 +90,10 @@ class mfcc_analysis(QG.QMainWindow):
 
     def get_data(self):
         self.data_id += 1
-        # data_path = QG.QFileDialog.getOpenFileName(self, 'Open File', '/home/')
+        self.data_path = QG.QFileDialog.getOpenFileName(self, 'Open File', '/home/')
         # data_path = '/home/fkubota/Project/ALSOK/data/稲成ビルFeat/kubota/feat_正常音.pkl'
         # data_path = '/home/fkubota/Project/Yokogawa/data/feat/徳山201809/mfcc-0502/Yokogawa_mfcc-0502_20180831_085430.pkl'
-        self.data_path = '/home/fkubota/MyData/030_GoogleDrive/Python/pyfile/my_APP/MFCC_analysis/data/sample.pkl'
+        # self.data_path = '/home/fkubota/MyData/030_GoogleDrive/Python/pyfile/my_APP/MFCC_analysis/data/sample.pkl'
         with open(self.data_path, mode='rb') as f:
             self.feat = pickle.load(f)
         self.feat = self.feat['data']
@@ -126,11 +130,19 @@ class mfcc_analysis(QG.QMainWindow):
     def setting_update_edited(self):
         tab = self.sender().parent()
         scatter = tab.plot_scatter
-        id = tab.id
+        check = tab.check
         step = int(tab.le_scatter0.text())
-        feat0 = self.feat[::step, int(tab.cb_scatter0.currentIndex())]
-        feat1 = self.feat[::step, int(tab.cb_scatter1.currentIndex())]
-        scatter.setPoints(feat0, feat1, brush=tab.color+'32')
+        data_id = tab.cb_scatter2.currentIndex()
+        # feat0 = self.feat[::step, int(tab.cb_scatter0.currentIndex())]
+        # feat1 = self.feat[::step, int(tab.cb_scatter1.currentIndex())]
+        # scatter.setPoints(feat0, feat1, brush=tab.color+'32')
+
+        if check.isChecked() :
+            feat0 = self.dataV[data_id][::step, int(tab.cb_scatter0.currentIndex())]
+            feat1 = self.dataV[data_id][::step, int(tab.cb_scatter1.currentIndex())]
+            scatter.setPoints(feat0, feat1, brush=tab.color+'32')
+        else:
+            scatter.clear()
 
     def change_color_edited(self):
         btn = self.sender()
@@ -172,9 +184,15 @@ class mfcc_analysis(QG.QMainWindow):
 
     def feat_setting_update_edited(self):
         tab = self.sender().parent()
+        check = tab.check
         step = int(tab.le0.text())
-        feat = self.feat[::step, int(tab.cb0.currentIndex())]
-        tab.curve.setData(feat, pen=tab.color+'99')
+        data_id = tab.cb2.currentIndex()
+        if check.isChecked() :
+            feat = self.dataV[data_id][::step, int(tab.cb0.currentIndex())]
+            tab.curve.setData(feat, pen=tab.color+'99')
+        else:
+            tab.curve.clear()
+
 
     def feat_change_color_edited(self):
         btn = self.sender()

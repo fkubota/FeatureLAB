@@ -7,6 +7,7 @@ import numpy as np
 import PyQt4.QtGui as QG
 import PyQt4.QtCore as QC
 import pyqtgraph as pg
+pg.setConfigOption('antialias', True)
 import pickle
 
 
@@ -64,6 +65,7 @@ class feature_plot_mod(QG.QWidget):
         self.tab_new.le0.editingFinished.connect(self.feat_setting_update)
         self.tab_new.btn_color.clicked.connect(self.feat_change_color)
         self.tab_new.btn_color.clicked.connect(self.feat_setting_update)
+        self.tab_new.check.stateChanged.connect(self.feat_setting_update)
 
 
         # plotitem
@@ -102,19 +104,24 @@ class w_tab(QG.QWidget):
        self.cb0 = QG.QComboBox()
        self.cb0.addItems(feat_name)
        self.cb2 = QG.QComboBox()
+       self.cb2.setSizePolicy(QG.QSizePolicy.Expanding, 20)
+       self.check = QG.QCheckBox()
+       self.check.setChecked(True)
 
        self.hbox1 = QG.QHBoxLayout()
-       self.hbox1.addWidget(self.btn_color)
+       self.hbox1.addWidget(self.check)
        self.hbox1.addWidget(self.lbl1)
        self.hbox1.addWidget(self.cb2)
        self.hbox1.addWidget(self.lbl0)
        self.hbox1.addWidget(self.le0)
+       self.hbox2 = QG.QHBoxLayout()
+       self.hbox2.addWidget(self.btn_color)
+       self.hbox2.addWidget(self.cb0)
        self.vbox0 = QG.QVBoxLayout()
        self.vbox0.addLayout(self.hbox1)
-       self.vbox0.addWidget(self.cb0)
+       self.vbox0.addLayout(self.hbox2)
        self.vbox0.addWidget(self.btn)
        self.setLayout(self.vbox0)
-
 
 
 
