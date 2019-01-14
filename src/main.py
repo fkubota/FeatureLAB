@@ -6,6 +6,7 @@ import sys
 import os
 script_path = os.path.dirname(os.path.abspath(__file__))
 import psutil
+import numpy as np
 import PyQt4.QtGui as QG
 import PyQt4.QtCore as QC
 import pickle
@@ -34,8 +35,8 @@ class mfcc_analysis(QG.QMainWindow):
         # constructor
         super(mfcc_analysis, self).__init__(parent)  # superclassのコンストラクタを使用。
         self.setWindowTitle('MFCC analysis')
-        self.resize(1000, 500)
-        self.move(200, 100)
+        self.resize(1000, 650)
+        self.move(100, 100)
 
         # tool bar
         self.add_scatter = QG.QAction(QG.QIcon(script_path+'/../icon_file/plus_icon2.png'), 'scatter', self)
@@ -72,7 +73,8 @@ class mfcc_analysis(QG.QMainWindow):
         self.data_browser.btn_data0.clicked.connect(self.get_data)
 
         #layout
-        self.mdi.addSubWindow(self.data_browser)
+        w_mdi = self.mdi.addSubWindow(self.data_browser)
+        w_mdi.resize(200, 300)
 
         # self.get_data()
 
@@ -122,10 +124,11 @@ class mfcc_analysis(QG.QMainWindow):
         w_scatter.change_color = self.change_color_edited
         w_scatter.update_scatter_cb = self.update_scatter_cb_edited
 
-        self.mdi.addSubWindow(w_scatter)
+        w_mdi = self.mdi.addSubWindow(w_scatter)
+        w_mdi.resize(350, 500)
         w_scatter.add_data()
         self.update_scatter_cb_edited()
-        w_scatter.show()
+        w_mdi.show()
 
     def setting_update_edited(self):
         tab = self.sender().parent()
@@ -176,10 +179,11 @@ class mfcc_analysis(QG.QMainWindow):
         w_feat_plot.feat_change_color = self.feat_change_color_edited
         w_feat_plot.update_feat_cb = self.update_feat_cb_edited
 
-        self.mdi.addSubWindow(w_feat_plot)
+        w_mdi = self.mdi.addSubWindow(w_feat_plot)
+        w_mdi.resize(350, 500)
         w_feat_plot.add_Data()
         self.update_feat_cb_edited()
-        w_feat_plot.show()
+        w_mdi.show()
 
     def feat_setting_update_edited(self):
         tab = self.sender().parent()
@@ -187,8 +191,11 @@ class mfcc_analysis(QG.QMainWindow):
         step = int(tab.le0.text())
         data_id = tab.cb2.currentIndex()
         if check.isChecked() :
+            length = len(self.dataV[data_id])
+            x = np.arange(0, length, 1)
+            x = x[::step]
             feat = self.dataV[data_id][::step, int(tab.cb0.currentIndex())]
-            tab.curve.setData(feat, pen=tab.color+'99')
+            tab.curve.setData(x/44100/60/60, feat, pen=tab.color+'99')
         else:
             tab.curve.clear()
 

@@ -37,17 +37,31 @@ class feature_plot_mod(QG.QWidget):
         self.btn0 = QG.QPushButton('add Plot')
         self.btn0.clicked.connect(self.add_Data)
         self.btn0.clicked.connect(self.update_feat_cb)
+        self.w_vbox0 = QG.QWidget()
 
         # tab
         self.tab = QG.QTabWidget()
         self.tab.setFixedHeight(150)
 
-        # layout
+        # # layout
+        # self.vbox0 = QG.QVBoxLayout()
+        # self.vbox0.addWidget(self.w_feat_plot)
+        # self.vbox0.addWidget(self.tab)
+        # self.vbox0.addWidget(self.btn0)
+        # self.setLayout(self.vbox0)
+
+        #layout
         self.vbox0 = QG.QVBoxLayout()
-        self.vbox0.addWidget(self.w_feat_plot)
         self.vbox0.addWidget(self.tab)
         self.vbox0.addWidget(self.btn0)
-        self.setLayout(self.vbox0)
+        self.w_vbox0.setLayout(self.vbox0)
+        self.hsplitter0 = QG.QSplitter(QC.Qt.Vertical)
+        self.hsplitter0.addWidget(self.w_feat_plot)
+        self.hsplitter0.addWidget(self.w_vbox0)
+        self.hsplitter0.setSizes([400, 10])
+        self.vbox1 = QG.QVBoxLayout()
+        self.vbox1.addWidget(self.hsplitter0)
+        self.setLayout(self.vbox1)
 
 
     def add_Data(self):
@@ -81,7 +95,6 @@ class feature_plot_mod(QG.QWidget):
         pass
     def update_feat_cb(self):
         pass
-
 
 
 class w_tab(QG.QWidget):
@@ -129,8 +142,8 @@ class w_tab(QG.QWidget):
 def main():
     app = QG.QApplication(sys.argv)
 
-    ui =feature_plot_mod()
-    ui.add_data()
+    ui = feature_plot_mod()
+    ui.add_Data()
     ui.show()
 
     sys.exit(app.exec_())

@@ -25,7 +25,7 @@ class scatter_mod(QG.QWidget):
         self.lastClicked = []
 
         super(scatter_mod, self).__init__(parent)  # superclassのコンストラクタを使用。
-        self.resize(100, 200)
+        # self.resize(100, 200)
         # self.mdi.addSubWindow(self.w_scatter)
 
 
@@ -41,20 +41,34 @@ class scatter_mod(QG.QWidget):
         self.btn0.clicked.connect(self.add_data)
         self.btn0.clicked.connect(self.update_scatter_cb)
         # self.btn0.mouseReleaseEvent()
-
+        self.w_vbox0 = QG.QWidget()
 
         # tab
         self.tab = QG.QTabWidget()
         self.tab.setFixedHeight(150)
 
         # layout
+        # self.vbox0 = QG.QVBoxLayout()
+        # self.vbox0.addWidget(self.w_plot_scatter)
+        # self.vbox0.addWidget(self.tab)
+        # self.vbox0.addWidget(self.btn0)
+        # self.setLayout(self.vbox0)
+
+        # layout
         self.vbox0 = QG.QVBoxLayout()
-        self.vbox0.addWidget(self.w_plot_scatter)
         self.vbox0.addWidget(self.tab)
         self.vbox0.addWidget(self.btn0)
-        self.setLayout(self.vbox0)
+        self.w_vbox0.setLayout(self.vbox0)
+        self.hsplitter0 = QG.QSplitter(QC.Qt.Vertical)
+        self.hsplitter0.addWidget(self.w_plot_scatter)
+        self.hsplitter0.addWidget(self.w_vbox0)
+        self.hsplitter0.setSizes([400, 10])
+        self.vbox1 = QG.QVBoxLayout()
+        self.vbox1.addWidget(self.hsplitter0)
+        self.setLayout(self.vbox1)
 
         self.show()
+
 
     def add_data(self):
         self.tab_id += 1
@@ -119,6 +133,7 @@ class w_tab(QG.QWidget):
         self.btn_color = QG.QPushButton()
         self.btn_color.setFixedWidth(20)
         self.btn_color.setFixedHeight(20)
+        # self.btn_color.setFixedHeight(20)
         self.btn_color.setStyleSheet("background-color: "+self.color)
         self.lbl_scatter0 = QG.QLabel('step')
         self.lbl_scatter0.setFixedWidth(30)
