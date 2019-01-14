@@ -9,7 +9,7 @@ import psutil
 import PyQt4.QtGui as QG
 import PyQt4.QtCore as QC
 import pickle
-from src import data_browser as db, scatter_mod as sctr
+from src import data_browser as db, scatter_mod as sctr, feature_plot_mod as fp
 
 
 class mfcc_analysis(QG.QMainWindow):
@@ -21,6 +21,10 @@ class mfcc_analysis(QG.QMainWindow):
         # scatter
         self.scatter = -1
         self.w_scatterV = []
+
+        # feat_plot
+        self.feat_plot = -1
+        self.w_feat_plotV = []
 
         # data_browser
         self.data_id = -1
@@ -35,9 +39,12 @@ class mfcc_analysis(QG.QMainWindow):
 
         # tool bar
         self.add_scatter = QG.QAction(QG.QIcon(script_path+'/../icon_file/plus_icon2.png'), 'scatter', self)
+        self.add_feat = QG.QAction(QG.QIcon(script_path+'/../icon_file/plus_icon2.png'), 'feature', self)
         self.add_scatter.triggered.connect(self.show_scatter)
+        self.add_feat.triggered.connect(self.show_feat_plot)
         self.toolbar = self.addToolBar("")
         self.toolbar.addAction(self.add_scatter)
+        self.toolbar.addAction(self.add_feat)
 
         # statusbar
         self.mem = psutil.virtual_memory()
@@ -61,12 +68,9 @@ class mfcc_analysis(QG.QMainWindow):
         self.data_browser = db.data_browser(self)
         self.data_browser.btn_data0.clicked.connect(self.get_data)
 
-
         #layout
         self.mdi.addSubWindow(self.data_browser)
 
-
-        # self.plot()
         self.get_data()
 
 
@@ -98,6 +102,7 @@ class mfcc_analysis(QG.QMainWindow):
 
 
         self.update_scatter_cb_edited()
+        self.update_feat_cb_edited()
 
 
 
@@ -146,6 +151,46 @@ class mfcc_analysis(QG.QMainWindow):
             # self.w_scatterV[idx].cb_scatter2.clear()
             # self.w_scatterV[idx].cb_scatter2.addItems(self.data_basenameV)
             # self.w_scatterV[idx].cb_scatter2.update()
+
+    def show_feat_plot(self):
+        self.feat_plot += 1
+        id = self.feat_plot
+        self.w_feat_plotV.append(fp.feature_plot_mod(self))
+        w_feat_plot = self.w_feat_plotV[id]
+        w_feat_plot.id = self.feat_plot
+        w_feat_plot.setWindowTitle('feature plot : ' + str(id))
+
+        # overload method
+        w_feat_plot.feat_setting_update = self.feat_setting_update_edited
+        w_feat_plot.feat_change_color = self.feat_change_color_edited
+        w_feat_plot.update_feat_cb = self.update_feat_cb_edited
+
+        self.mdi.addSubWindow(w_feat_plot)
+        w_feat_plot.add_Data()
+        self.update_feat_cb_edited()
+        w_feat_plot.show()
+
+    def feat_setting_update_edited(self):
+        tab = self.sender().parent()
+        step = int(tab.le0.text())
+        feat = self.feat[::step, int(tab.cb0.currentIndex())]
+        tab.curve.setData(feat, pen=tab.color+'99')
+
+    def feat_change_color_edited(self):
+        btn = self.sender()
+        tab = self.sender().parent()
+        color = QG.QColorDialog.getColor()
+        tab.color = color.name()
+        btn.setStyleSheet("background-color: "+ tab.color)
+
+    def update_feat_cb_edited(self):
+        for feat_idx in range(len(self.w_feat_plotV)):
+            w_feat = self.w_feat_plotV[feat_idx]
+            for tab_idx in range(len(w_feat.tabV)):
+                w_feat.tabV[tab_idx].cb2.clear()
+                w_feat.tabV[tab_idx].cb2.addItems(self.data_basenameV)
+                w_feat.tabV[tab_idx].cb2.update()
+
 
 
 def main():

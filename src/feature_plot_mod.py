@@ -31,12 +31,11 @@ class feature_plot_mod(QG.QWidget):
         self.p0_feat = self.w_feat_plot.addPlot()
         self.p0_feat.showGrid(x=True, y=True, alpha=0.7)
 
-        self.curve = self.p0_feat.plot()  #
-        self.curve.setData([1,2,3], [1,2,3])    #---------
 
         # wdiget
         self.btn0 = QG.QPushButton('add Plot')
-        self.btn0.clicked.connect(self.add_data)
+        self.btn0.clicked.connect(self.add_Data)
+        self.btn0.clicked.connect(self.update_feat_cb)
 
         # tab
         self.tab = QG.QTabWidget()
@@ -50,7 +49,7 @@ class feature_plot_mod(QG.QWidget):
         self.setLayout(self.vbox0)
 
 
-    def add_data(self):
+    def add_Data(self):
         self.tab_id += 1
         id = self.tab_id
         self.tabV.append(w_tab())
@@ -59,6 +58,27 @@ class feature_plot_mod(QG.QWidget):
         self.tab.addTab(self.tab_new, 'Tab--'+str(id))
 
         # event
+        self.tab_new.cb0.currentIndexChanged.connect(self.feat_setting_update)
+        self.tab_new.cb2.currentIndexChanged.connect(self.feat_setting_update)
+        self.tab_new.btn.clicked.connect(self.feat_setting_update)
+        self.tab_new.le0.editingFinished.connect(self.feat_setting_update)
+        self.tab_new.btn_color.clicked.connect(self.feat_change_color)
+        self.tab_new.btn_color.clicked.connect(self.feat_setting_update)
+
+
+        # plotitem
+        self.tab_new.curve = self.p0_feat.plot()
+
+        # update comnobox
+        self.update_feat_cb()
+
+
+    def feat_setting_update(self):
+        pass
+    def feat_change_color(self):
+        pass
+    def update_feat_cb(self):
+        pass
 
 
 
@@ -68,37 +88,32 @@ class w_tab(QG.QWidget):
        self.color = '#ff0000'
 
        # widget
-       self.btn_scatter = QG.QPushButton('update', self)
+       self.btn = QG.QPushButton('update', self)
        self.btn_color = QG.QPushButton()
        self.btn_color.setFixedWidth(20)
        self.btn_color.setFixedHeight(20)
        self.btn_color.setStyleSheet("background-color: "+self.color)
-       self.lbl_scatter0 = QG.QLabel('step')
-       self.lbl_scatter0.setFixedWidth(30)
-       self.lbl_scatter1 = QG.QLabel('data')
-       self.lbl_scatter1.setFixedWidth(30)
-       self.le_scatter0 = (QG.QLineEdit(str(100)))
-       self.le_scatter0.setFixedWidth(50)
-       self.cb_scatter0 = QG.QComboBox()
-       self.cb_scatter0.addItems(feat_name)
-       self.cb_scatter1 = QG.QComboBox()
-       self.cb_scatter1.addItems(feat_name)
-       self.cb_scatter2 = QG.QComboBox()
+       self.lbl0 = QG.QLabel('step')
+       self.lbl0.setFixedWidth(30)
+       self.lbl1 = QG.QLabel('data')
+       self.lbl1.setFixedWidth(30)
+       self.le0 = (QG.QLineEdit(str(100)))
+       self.le0.setFixedWidth(50)
+       self.cb0 = QG.QComboBox()
+       self.cb0.addItems(feat_name)
+       self.cb2 = QG.QComboBox()
 
-       self.hbox_scatter0 = QG.QHBoxLayout()
-       self.hbox_scatter0.addWidget(self.cb_scatter0)
-       self.hbox_scatter0.addWidget(self.cb_scatter1)
-       self.hbox_scatter1 = QG.QHBoxLayout()
-       self.hbox_scatter1.addWidget(self.btn_color)
-       self.hbox_scatter1.addWidget(self.lbl_scatter1)
-       self.hbox_scatter1.addWidget(self.cb_scatter2)
-       self.hbox_scatter1.addWidget(self.lbl_scatter0)
-       self.hbox_scatter1.addWidget(self.le_scatter0)
-       self.vbox_scatter0 = QG.QVBoxLayout()
-       self.vbox_scatter0.addLayout(self.hbox_scatter1)
-       self.vbox_scatter0.addLayout(self.hbox_scatter0)
-       self.vbox_scatter0.addWidget(self.btn_scatter)
-       self.setLayout(self.vbox_scatter0)
+       self.hbox1 = QG.QHBoxLayout()
+       self.hbox1.addWidget(self.btn_color)
+       self.hbox1.addWidget(self.lbl1)
+       self.hbox1.addWidget(self.cb2)
+       self.hbox1.addWidget(self.lbl0)
+       self.hbox1.addWidget(self.le0)
+       self.vbox0 = QG.QVBoxLayout()
+       self.vbox0.addLayout(self.hbox1)
+       self.vbox0.addWidget(self.cb0)
+       self.vbox0.addWidget(self.btn)
+       self.setLayout(self.vbox0)
 
 
 
