@@ -68,7 +68,7 @@ class mfcc_analysis(QG.QMainWindow):
         self.setCentralWidget(self.mdi)
 
         # data browser
-        self.data_browser = db.data_browser(self)
+        self.data_browser = db.data_browser()
         self.data_browser.btn_data0.clicked.connect(self.get_data)
 
         #layout
@@ -156,13 +156,12 @@ class mfcc_analysis(QG.QMainWindow):
         for scatter_idx in range(len(self.w_scatterV)):
             w_scatter = self.w_scatterV[scatter_idx]
             for tab_idx in range(len(w_scatter.tabV)):
+                idx = w_scatter.tabV[tab_idx].cb_scatter2.currentIndex()
                 w_scatter.tabV[tab_idx].cb_scatter2.clear()
                 w_scatter.tabV[tab_idx].cb_scatter2.addItems(self.data_basenameV)
+                if idx!=-1:
+                    w_scatter.tabV[tab_idx].cb_scatter2.setCurrentIndex(idx)
                 w_scatter.tabV[tab_idx].cb_scatter2.update()
-
-            # self.w_scatterV[idx].cb_scatter2.clear()
-            # self.w_scatterV[idx].cb_scatter2.addItems(self.data_basenameV)
-            # self.w_scatterV[idx].cb_scatter2.update()
 
     def show_feat_plot(self):
         self.feat_plot += 1
@@ -205,8 +204,11 @@ class mfcc_analysis(QG.QMainWindow):
         for feat_idx in range(len(self.w_feat_plotV)):
             w_feat = self.w_feat_plotV[feat_idx]
             for tab_idx in range(len(w_feat.tabV)):
+                idx = w_feat.tabV[tab_idx].cb2.currentIndex()
                 w_feat.tabV[tab_idx].cb2.clear()
                 w_feat.tabV[tab_idx].cb2.addItems(self.data_basenameV)
+                if idx!= -1:
+                    w_feat.tabV[tab_idx].cb2.setCurrentIndex(idx)
                 w_feat.tabV[tab_idx].cb2.update()
 
 

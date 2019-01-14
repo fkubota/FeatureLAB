@@ -78,20 +78,22 @@ class scatter_mod(QG.QWidget):
         # plotitem
         self.tab_new.plot_scatter = pg.ScatterPlotItem(pen=(None), brush=(225,0, 0, 40), name="tab : " + str(id))
         self.p0_scatter.addItem(self.tab_new.plot_scatter)
-        self.tab_new.plot_scatter.sigClicked.connect(self.clicked)
+        self.tab_new.plot_scatter.sigClicked.connect(self.point_clicked)
 
         # update combobox
         self.update_scatter_cb()
 
-    def clicked(self, plot, points):
-        print(points[0].pos())
+    def point_clicked(self, plot, points):
+        print(plot)
+        # print(plot.parent())
+        # print(points[0].x())
+        # print(points[0].parent())
         for p in self.lastClicked:
             p.resetPen()
         for p in points:
-            p.setPen('b', width=2)
+            if p == points[0]:
+                p.setPen('b', width=2)
         self.lastClicked = points
-
-
 
 
 
