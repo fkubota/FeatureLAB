@@ -30,6 +30,7 @@ class feature_plot_mod(QG.QWidget):
         self.w_feat_plot.resize(300, 200)
         self.w_feat_plot.setBackground('#FFFFFF00')
         self.p0_feat = self.w_feat_plot.addPlot()
+        self.p0_feat.setLabel('bottom', 'Time', 'hour')
         self.p0_feat.showGrid(x=True, y=True, alpha=0.7)
 
 
