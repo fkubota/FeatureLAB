@@ -5,6 +5,7 @@ MFCC_analysis
 import sys
 import os
 script_path = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(script_path + '/../'))
 import psutil
 import numpy as np
 import PyQt4.QtGui as QG
@@ -98,7 +99,10 @@ class mfcc_analysis(QG.QMainWindow):
         # self.data_path = '/home/fkubota/MyData/030_GoogleDrive/Python/pyfile/my_APP/MFCC_analysis/data/sample.pkl'
         with open(self.data_path, mode='rb') as f:
             self.feat = pickle.load(f)
-        self.feat = self.feat['data']
+        try:
+            self.feat = self.feat['data']
+        except:
+            pass
         self.dataV.append(self.feat)
         self.data_basenameV.append(os.path.basename(self.data_path))
         # self.data_browser.table.setRowCount(self.data_id+1)
@@ -195,7 +199,7 @@ class mfcc_analysis(QG.QMainWindow):
             x = np.arange(0, length, 1)
             x = x[::step]
             feat = self.dataV[data_id][::step, int(tab.cb0.currentIndex())]
-            tab.curve.setData(x/44100/60/60, feat, pen=tab.color+'99')
+            tab.curve.setData(x/4/60/60, feat, pen=tab.color+'99')
         else:
             tab.curve.clear()
 
