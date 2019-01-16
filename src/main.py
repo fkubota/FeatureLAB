@@ -11,7 +11,8 @@ import numpy as np
 import PyQt4.QtGui as QG
 import PyQt4.QtCore as QC
 import pickle
-from src import data_browser as db, scatter_mod as sctr, feature_plot_mod as fp
+import pyqtgraph as pg
+from src import data_browser as db, scatter_mod as sctr, feature_plot_mod as fp, histogram_mod as histogram
 
 
 class mfcc_analysis(QG.QMainWindow):
@@ -28,10 +29,15 @@ class mfcc_analysis(QG.QMainWindow):
         self.feat_plot = -1
         self.w_feat_plotV = []
 
+        # hittgram
+        self.hist = -1
+        self.w_hist_plotV = []
+
         # data_browser
         self.data_id = -1
         self.dataV = []
         self.data_basenameV = []
+
 
         # constructor
         super(mfcc_analysis, self).__init__(parent)  # superclassのコンストラクタを使用。
@@ -42,11 +48,14 @@ class mfcc_analysis(QG.QMainWindow):
         # tool bar
         self.add_scatter = QG.QAction(QG.QIcon(script_path+'/../icon_file/plus_icon2.png'), 'scatter', self)
         self.add_feat = QG.QAction(QG.QIcon(script_path+'/../icon_file/plus_icon2.png'), 'feature', self)
+        self.add_hist = QG.QAction(QG.QIcon(script_path+'/../icon_file/plus_icon2.png'), 'feature', self)
         self.add_scatter.triggered.connect(self.show_scatter)
         self.add_feat.triggered.connect(self.show_feat_plot)
+        self.add_hist.triggered.connect(self.show_hist)
         self.toolbar = self.addToolBar("")
         self.toolbar.addAction(self.add_scatter)
         self.toolbar.addAction(self.add_feat)
+        self.toolbar.addAction(self.add_hist)
 
         # statusbar
         self.mem = psutil.virtual_memory()
@@ -221,6 +230,54 @@ class mfcc_analysis(QG.QMainWindow):
                 if idx!= -1:
                     w_feat.tabV[tab_idx].cb2.setCurrentIndex(idx)
                 w_feat.tabV[tab_idx].cb2.update()
+
+    def show_hist(self):
+        self.hist += 1
+        id = self.hist
+        self.w_hist_plotV.append(histogram.histogram_mod(self))
+        w_hist_plot = self.w_hist_plotV[id]
+        w_hist_plot.id = self.hist
+        w_hist_plot.setWindowTitle('histogram plot : ' + str(id))
+
+        # overload method
+        w_hist_plot.hist_setting_update = self.hist_setting_update_edited
+        w_hist_plot.hist_change_color = self.hist_change_color_edited
+        w_hist_plot.update_hist_cb = self.update_hist_cb_edited
+
+        w_mdi = self.mdi.addSubWindow(w_hist_plot)
+        w_mdi.resize(350, 500)
+        w_hist_plot.add_Data()
+        self.update_hist_cb_edited()
+        w_mdi.show()
+
+    def hist_setting_update_edited(self):
+        tab = self.sender().parent()
+        check = tab.check
+        step = int(tab.le0.text())
+        bins_num = int(tab.le1.text())
+        data_id = tab.cb2.currentIndex()
+        if check.isChecked() :
+            feat = self.dataV[data_id][::step, int(tab.cb0.currentIndex())]
+            hist, bins = np.histogram(feat, bins=bins_num)
+            # X = []
+            # for i in range(1, len(bins)):
+            #     X.append((bins[i-1]+bins[i])/2)
+            tab.plot_hist.setData(bins, hist, pen=tab.color, fillBrush=tab.color+'45', fillLevel=0, stepMode=True)
+        else:
+            tab.plot_hist.clear()
+
+    def hist_change_color_edited(self):
+        pass
+    def update_hist_cb_edited(self):
+        for hist_idx in range(len(self.w_hist_plotV)):
+            w_hist = self.w_hist_plotV[hist_idx]
+            for tab_idx in range(len(w_hist.tabV)):
+                idx = w_hist.tabV[tab_idx].cb2.currentIndex()
+                w_hist.tabV[tab_idx].cb2.clear()
+                w_hist.tabV[tab_idx].cb2.addItems(self.data_basenameV)
+                if idx!= -1:
+                    w_hist.tabV[tab_idx].cb2.setCurrentIndex(idx)
+                w_hist.tabV[tab_idx].cb2.update()
 
 
 
