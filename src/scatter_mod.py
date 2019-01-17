@@ -95,31 +95,39 @@ class scatter_mod(QG.QWidget):
         self.textitem = pg.TextItem('', color='b')
         self.p0_scatter.addItem(self.textitem)
         self.tab_new.plot_scatter.sigClicked.connect(self.point_clicked)
+        self.p0_scatter.hasTab = self.tab_new
 
         # update combobox
         self.update_scatter_cb()
 
     def point_clicked(self, plot, points):
-        print(plot.getViewWidget())
-        print(plot.getViewWidget().parent())
-        print(plot.getViewWidget().parent().parent())
-        print(plot.getViewWidget().parent().parent().p0_scatter)
-        pos = points[0].pos()
-        textitem = plot.getViewWidget().parent().parent().textitem
-        print(textitem)
-        # text = pg.TextItem(str(pos), color='b')#, pos=(pos[0], pos[1]))
-        textitem.setPos(pos[0], pos[1])
-        textitem.setText(str(pos))
-        textitem.setVisible(True)
-        # w_plot_scatter.addItem(textitem)
-        # print(points[0].parent())
-        # print(points[0].parent())
-        for p in self.lastClicked:
-            p.resetPen()
-        for p in points:
-            if p == points[0]:
-                p.setPen('b', width=2)
-        self.lastClicked = points
+        pass
+        # # print(plot.getViewWidget())
+        # # print(plot.getViewWidget().parent())
+        # # print(plot.getViewWidget().parent().parent())
+        # p0_scatter = plot.getViewWidget().parent().parent().p0_scatter
+        # tab = p0_scatter.hasTab
+        # data_idx = tab.cb_scatter2.currentIndex()
+        # pos = points[0].pos()
+        # textitem = plot.getViewWidget().parent().parent().textitem
+        #
+        #
+        #
+        #
+        # # print(textitem)
+        # # text = pg.TextItem(str(pos), color='b')#, pos=(pos[0], pos[1]))
+        # textitem.setPos(pos[0], pos[1])
+        # textitem.setText(str(pos))
+        # textitem.setVisible(True)
+        # # w_plot_scatter.addItem(textitem)
+        # # print(points[0].parent())
+        # # print(points[0].parent())
+        # for p in self.lastClicked:
+        #     p.resetPen()
+        # for p in points:
+        #     if p == points[0]:
+        #         p.setPen('b', width=2)
+        # self.lastClicked = points
 
 
 

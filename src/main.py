@@ -24,6 +24,7 @@ class mfcc_analysis(QG.QMainWindow):
         # scatter
         self.scatter = -1
         self.w_scatterV = []
+        self.lastClicked = []
 
         # feat_plot
         self.feat_plot = -1
@@ -136,12 +137,46 @@ class mfcc_analysis(QG.QMainWindow):
         w_scatter.setting_update = self.setting_update_edited
         w_scatter.change_color = self.change_color_edited
         w_scatter.update_scatter_cb = self.update_scatter_cb_edited
+        w_scatter.point_clicked = self.point_clicked_edited
 
         w_mdi = self.mdi.addSubWindow(w_scatter)
         w_mdi.resize(350, 500)
         w_scatter.add_data()
         self.update_scatter_cb_edited()
         w_mdi.show()
+
+    def point_clicked_edited(self, plot, points):
+        # print(plot.getViewWidget())
+        # print(plot.getViewWidget().parent())
+        # print(plot.getViewWidget().parent().parent())
+        p0_scatter = plot.getViewWidget().parent().parent().p0_scatter
+        tab = p0_scatter.hasTab
+        data_idx = tab.cb_scatter2.currentIndex()
+        pos = points[0].pos()
+        textitem = plot.getViewWidget().parent().parent().textitem
+
+        feats = self.dataV[data_idx]
+        idx = np.where(feats == pos[0])
+        # b = np.where(feats == pos[1])
+        # print(pos[0], pos[1])
+
+
+        # print(textitem)
+        # text = pg.TextItem(str(pos), color='b')#, pos=(pos[0], pos[1]))
+        textitem.setPos(pos[0], pos[1])
+        text = 'data idx: ' + str(data_idx) +  '\n Time(h) = ' + str(idx[0][0]/4/60/60)
+        # text = 'data idx: {} \n Time(h) {}'
+        textitem.setText(text)
+        textitem.setVisible(True)
+        # w_plot_scatter.addItem(textitem)
+        # print(points[0].parent())
+        # print(points[0].parent())
+        for p in self.lastClicked:
+            p.resetPen()
+        for p in points:
+            if p == points[0]:
+                p.setPen('b', width=2)
+        self.lastClicked = points
 
     def setting_update_edited(self):
         tab = self.sender().parent()
@@ -290,6 +325,10 @@ class mfcc_analysis(QG.QMainWindow):
                 if idx!= -1:
                     w_hist.tabV[tab_idx].cb2.setCurrentIndex(idx)
                 w_hist.tabV[tab_idx].cb2.update()
+
+
+
+
 
 
 
