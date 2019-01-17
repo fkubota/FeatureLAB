@@ -145,6 +145,12 @@ class mfcc_analysis(QG.QMainWindow):
 
     def setting_update_edited(self):
         tab = self.sender().parent()
+        # print(tab.parent().parent().parent())
+        # print(tab.parent().parent().parent().parent())
+        mod = tab.parent().parent().parent().parent().parent()
+        textitem = mod.textitem
+        textitem.setText('a')
+        textitem.setVisible(False)
         scatter = tab.plot_scatter
         check = tab.check
         step = int(tab.le_scatter0.text())
@@ -169,6 +175,7 @@ class mfcc_analysis(QG.QMainWindow):
 
 
     def update_scatter_cb_edited(self):
+        # print(self.sender())
         for scatter_idx in range(len(self.w_scatterV)):
             w_scatter = self.w_scatterV[scatter_idx]
             for tab_idx in range(len(w_scatter.tabV)):
