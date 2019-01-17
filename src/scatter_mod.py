@@ -91,7 +91,7 @@ class scatter_mod(QG.QWidget):
 
         # plotitem
         self.tab_new.plot_scatter = pg.ScatterPlotItem(pen=(None), brush=(225,0, 0, 40), name="tab : " + str(id))
-        self.p0_scatter.addItem(self.tab_new.plot_scatter)
+        self.p0_scatter.addItem(self.tab_new.plot_scatter, name='hello')
         self.tab_new.plot_scatter.sigClicked.connect(self.point_clicked)
 
         # update combobox
@@ -99,8 +99,18 @@ class scatter_mod(QG.QWidget):
 
     def point_clicked(self, plot, points):
         print(plot)
-        # print(plot.parent())
-        # print(points[0].x())
+        print(points)
+        print(plot.getViewWidget())
+        print(plot.getViewWidget().parent())
+        print(plot.getViewWidget().parent().parent())
+        print(plot.getViewWidget().parent().parent().p0_scatter)
+        pos = points[0].pos
+        w_plot_scatter = plot.getViewWidget().parent().parent().p0_scatter
+        text = pg.TextItem('hello')#, pos=(pos[0], pos[1]))
+        print(pos)
+        text.setPos(pos)
+        w_plot_scatter.addItem(text)
+        # print(points[0].parent())
         # print(points[0].parent())
         for p in self.lastClicked:
             p.resetPen()

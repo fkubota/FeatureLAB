@@ -262,12 +262,17 @@ class mfcc_analysis(QG.QMainWindow):
             # X = []
             # for i in range(1, len(bins)):
             #     X.append((bins[i-1]+bins[i])/2)
-            tab.plot_hist.setData(bins, hist, pen=tab.color, fillBrush=tab.color+'45', fillLevel=0, stepMode=True)
+            tab.plot_hist.setData(bins, hist, pen=tab.color+'ff', fillBrush=tab.color+'45', fillLevel=0, stepMode=True)
         else:
             tab.plot_hist.clear()
 
     def hist_change_color_edited(self):
-        pass
+        btn = self.sender()
+        tab = self.sender().parent()
+        color = QG.QColorDialog.getColor()
+        tab.color = color.name()
+        btn.setStyleSheet("background-color: "+ tab.color)
+
     def update_hist_cb_edited(self):
         for hist_idx in range(len(self.w_hist_plotV)):
             w_hist = self.w_hist_plotV[hist_idx]
@@ -281,10 +286,11 @@ class mfcc_analysis(QG.QMainWindow):
 
 
 
+
 def main():
     app = QG.QApplication(sys.argv)
 
-    ui =mfcc_analysis()
+    ui = mfcc_analysis()
     ui.show()
 
     sys.exit(app.exec_())
