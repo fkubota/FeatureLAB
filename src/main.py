@@ -165,6 +165,7 @@ class mfcc_analysis(QG.QMainWindow):
         # text = pg.TextItem(str(pos), color='b')#, pos=(pos[0], pos[1]))
         textitem.setPos(pos[0], pos[1])
         text = 'data idx: ' + str(data_idx) +  '\n Time(h) = ' + str(idx[0][0]/4/60/60)
+        text = 'data idx : {} \n Time(h) = {:.3f}'.format(data_idx, idx[0][0]/4/60/60)
         # text = 'data idx: {} \n Time(h) {}'
         textitem.setText(text)
         textitem.setVisible(True)
