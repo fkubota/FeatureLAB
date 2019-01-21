@@ -383,6 +383,7 @@ class mfcc_analysis(QG.QMainWindow):
     def sub_doit_edited(self):
         a = self.sender().parent().parent().parent()
         win = a.parent().parent().parent()
+        # win.w_sub_plot.resize(100, 100)
         for tab in win.tabV:
             step = int(tab.le0.text())
             data_id = tab.cb2.currentIndex()

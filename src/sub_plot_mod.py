@@ -92,6 +92,7 @@ class sub_plot_mod(QG.QWidget):
         self.tab_new.btn_color.clicked.connect(self.sub_setting_update)
         self.tab_new.check.stateChanged.connect(self.sub_setting_update)
         self.tab_new.btn_doit.clicked.connect(self.sub_doit)
+        self.tab_new.btn.clicked.connect(self.zoom_in)
 
         # plotitem
         self.tab_new.curves = []
@@ -101,6 +102,14 @@ class sub_plot_mod(QG.QWidget):
 
         # update comnobox
         self.update_sub_cb()
+
+    def zoom_out(self):
+        pass
+
+    def zoom_in(self):
+        size = self.w_sub_plot.size()
+        w = size[0]
+
 
 
     def sub_setting_update(self):
