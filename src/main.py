@@ -12,7 +12,11 @@ import PyQt4.QtGui as QG
 import PyQt4.QtCore as QC
 import pickle
 import pyqtgraph as pg
-from src import data_browser as db, scatter_mod as sctr, feature_plot_mod as fp, histogram_mod as histogram
+from src import data_browser as db
+from src import scatter_mod as sctr
+from src import feature_plot_mod as fp
+from src import histogram_mod as histogram
+from src import  sub_plot_mod as sp
 
 
 class mfcc_analysis(QG.QMainWindow):
@@ -34,6 +38,10 @@ class mfcc_analysis(QG.QMainWindow):
         self.hist = -1
         self.w_hist_plotV = []
 
+        # sub_plot
+        self.sub = -1
+        self.w_sub_plotV = []
+
         # data_browser
         self.data_id = -1
         self.dataV = []
@@ -50,13 +58,16 @@ class mfcc_analysis(QG.QMainWindow):
         self.add_scatter = QG.QAction(QG.QIcon(script_path+'/../icon_file/plus_icon2.png'), 'scatter', self)
         self.add_feat = QG.QAction(QG.QIcon(script_path+'/../icon_file/plus_icon2.png'), 'feature', self)
         self.add_hist = QG.QAction(QG.QIcon(script_path+'/../icon_file/plus_icon2.png'), 'feature', self)
+        self.add_sub = QG.QAction(QG.QIcon(script_path+'/../icon_file/plus_icon2.png'), 'feature', self)
         self.add_scatter.triggered.connect(self.show_scatter)
         self.add_feat.triggered.connect(self.show_feat_plot)
         self.add_hist.triggered.connect(self.show_hist)
+        self.add_sub.triggered.connect(self.show_sub_plot)
         self.toolbar = self.addToolBar("")
         self.toolbar.addAction(self.add_scatter)
         self.toolbar.addAction(self.add_feat)
         self.toolbar.addAction(self.add_hist)
+        self.toolbar.addAction(self.add_sub)
 
         # statusbar
         self.mem = psutil.virtual_memory()
@@ -305,7 +316,7 @@ class mfcc_analysis(QG.QMainWindow):
             # X = []
             # for i in range(1, len(bins)):
             #     X.append((bins[i-1]+bins[i])/2)
-            tab.plot_hist.setData(bins, hist, pen=tab.color+'ff', fillBrush=tab.color+'45', fillLevel=0, stepMode=True)
+            tab.plot_hist.setData(bins, hist, pen=tab.color+'ff', fillBrush=tab.color+'50', fillLevel=0, stepMode=True)
         else:
             tab.plot_hist.clear()
 
@@ -327,6 +338,68 @@ class mfcc_analysis(QG.QMainWindow):
                     w_hist.tabV[tab_idx].cb2.setCurrentIndex(idx)
                 w_hist.tabV[tab_idx].cb2.update()
 
+    def show_sub_plot(self):
+        self.sub += 1
+        id = self.sub
+        self.w_sub_plotV.append(sp.sub_plot_mod(self))
+        w_sub_plot = self.w_sub_plotV[id]
+        w_sub_plot.id = self.sub
+        w_sub_plot.setWindowTitle('histogram plot : ' + str(id))
+
+        # overload method
+        w_sub_plot.sub_setting_update = self.sub_setting_update_edited
+        w_sub_plot.sub_change_color = self.sub_change_color_edited
+        w_sub_plot.update_sub_cb = self.update_sub_cb_edited
+        w_sub_plot.sub_doit = self.sub_doit_edited
+
+        w_mdi = self.mdi.addSubWindow(w_sub_plot)
+        w_mdi.resize(350, 500)
+        w_sub_plot.add_Data()
+        self.update_sub_cb_edited()
+        w_mdi.show()
+
+
+
+    def sub_setting_update_edited(self):
+        pass
+    def sub_change_color_edited(self):
+        btn = self.sender()
+        tab = self.sender().parent()
+        color = QG.QColorDialog.getColor()
+        tab.color = color.name()
+        btn.setStyleSheet("background-color: "+ tab.color)
+
+    def update_sub_cb_edited(self):
+        for sub_idx in range(len(self.w_sub_plotV)):
+            w_sub = self.w_sub_plotV[sub_idx]
+            for tab_idx in range(len(w_sub.tabV)):
+                idx = w_sub.tabV[tab_idx].cb2.currentIndex()
+                w_sub.tabV[tab_idx].cb2.clear()
+                w_sub.tabV[tab_idx].cb2.addItems(self.data_basenameV)
+                if idx!= -1:
+                    w_sub.tabV[tab_idx].cb2.setCurrentIndex(idx)
+                w_sub.tabV[tab_idx].cb2.update()
+
+    def sub_doit_edited(self):
+        a = self.sender().parent().parent().parent()
+        win = a.parent().parent().parent()
+        for tab in win.tabV:
+            step = int(tab.le0.text())
+            data_id = tab.cb2.currentIndex()
+            for idx, feat_name in enumerate(self.feat_names):
+                feat0 = self.dataV[data_id][::step, idx]
+                tab.curves[idx].setData(feat0, pen=tab.color+'99')
+
+
+
+
+        pass
+        # tab = self.sender().parent()
+
+        # check = tab.check
+        # step = int(tab.le0.text())
+        # data_id = tab.cb2.currentIndex()
+        # if check.isChecked() :
 
 
 
