@@ -134,6 +134,8 @@ class mfcc_analysis(QG.QMainWindow):
 
         self.update_scatter_cb_edited()
         self.update_feat_cb_edited()
+        self.update_hist_cb_edited()
+        self.update_sub_cb_edited()
 
 
 

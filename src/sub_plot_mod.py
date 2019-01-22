@@ -47,6 +47,10 @@ class sub_plot_mod(QG.QWidget):
         self.scrollArea = QG.QScrollArea()
         self.scrollArea.setWidget(self.w_sub_plot)
         # self.scrollArea.setWidget(self.hbox)
+        self.btn_zoom_in = QG.QPushButton('ZoomIn')
+        self.btn_zoom_in.clicked.connect(self.zoom_in)
+        self.btn_zoom_out= QG.QPushButton('ZoomOut')
+        self.btn_zoom_out.clicked.connect(self.zoom_out)
 
         # tab
         self.tab = QG.QTabWidget()
@@ -60,9 +64,14 @@ class sub_plot_mod(QG.QWidget):
         # self.setLayout(self.vbox0)
 
         #layout
+        self.hbox0 = QG.QHBoxLayout()
+        self.hbox0.addWidget(self.btn0)
+        self.hbox0.addWidget(self.btn_zoom_in)
+        self.hbox0.addWidget(self.btn_zoom_out)
         self.vbox0 = QG.QVBoxLayout()
         self.vbox0.addWidget(self.tab)
-        self.vbox0.addWidget(self.btn0)
+        # self.vbox0.addWidget(self.btn0)
+        self.vbox0.addLayout(self.hbox0)
         self.w_vbox0.setLayout(self.vbox0)
         self.hsplitter0 = QG.QSplitter(QC.Qt.Vertical)
         # self.hsplitter0.addWidget(self.w_sub_plot)
@@ -104,11 +113,16 @@ class sub_plot_mod(QG.QWidget):
         self.update_sub_cb()
 
     def zoom_out(self):
-        pass
+        size = self.w_sub_plot.size()
+        w = size.width()
+        h = size.height()
+        self.w_sub_plot.resize(w-30, h-30)
 
     def zoom_in(self):
         size = self.w_sub_plot.size()
-        w = size[0]
+        w = size.width()
+        h = size.height()
+        self.w_sub_plot.resize(w+30, h+30)
 
 
 
