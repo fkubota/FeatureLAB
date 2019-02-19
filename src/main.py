@@ -119,11 +119,14 @@ class mfcc_analysis(QG.QMainWindow):
         # data_path = '/home/fkubota/Project/Yokogawa/data/feat/徳山201809/mfcc-0502/Yokogawa_mfcc-0502_20180831_085430.pkl'
         # self.data_path = '/home/fkubota/MyData/030_GoogleDrive/Python/pyfile/my_APP/MFCC_analysis/data/sample.pkl'
         with open(self.data_path, mode='rb') as f:
-            self.feat = pickle.load(f)
+            self.feat = np.array(pickle.load(f))
         try:
             self.feat = self.feat['data']
         except:
             pass
+
+        # try:
+        #     self.feat = self.feat
         self.dataV.append(self.feat)
         self.data_basenameV.append(os.path.basename(self.data_path))
         # self.data_browser.table.setRowCount(self.data_id+1)
