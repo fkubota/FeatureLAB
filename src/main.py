@@ -16,7 +16,7 @@ from src import data_browser as db
 from src import scatter_mod as sctr
 from src import feature_plot_mod as fp
 from src import histogram_mod as histogram
-from src import  sub_plot_mod as sp
+from src import tile_plot_mod as sp
 
 
 class mfcc_analysis(QG.QMainWindow):
@@ -24,6 +24,8 @@ class mfcc_analysis(QG.QMainWindow):
         self.feat_names = ['zcr','energy','energy_entropy','spectral_centroid','spectral_spread','spectral_entropy','spectral_flux','spectral_rolloff',
                             'mfcc_1','mfcc_2','mfcc_3','mfcc_4','mfcc_5','mfcc_6','mfcc_7','mfcc_8','mfcc_9','mfcc_10','mfcc_11','mfcc_12','mfcc_13',
                             'chroma_1','chroma_2','chroma_3','chroma_4','chroma_5','chroma_6','chroma_7','chroma_8','chroma_9','chroma_10','chroma_11','chroma_12','chroma_std']
+
+        self.feat_nameV = []
 
         # scatter
         self.scatter = -1
@@ -111,29 +113,19 @@ class mfcc_analysis(QG.QMainWindow):
         self.pbur.setValue(mem1/mem0* 100)
         self.repaint()
 
-
     def get_data(self):
         self.data_id += 1
         self.data_path = QG.QFileDialog.getOpenFileName(self, 'Open File', '/home/')
-        # data_path = '/home/fkubota/Project/ALSOK/data/稲成ビルFeat/kubota/feat_正常音.pkl'
-        # data_path = '/home/fkubota/Project/Yokogawa/data/feat/徳山201809/mfcc-0502/Yokogawa_mfcc-0502_20180831_085430.pkl'
-        # self.data_path = '/home/fkubota/MyData/030_GoogleDrive/Python/pyfile/my_APP/MFCC_analysis/data/sample.pkl'
         with open(self.data_path, mode='rb') as f:
-            self.feat = np.array(pickle.load(f))
-        try:
-            self.feat = self.feat['data']
-        except:
-            pass
-
-        # try:
-        #     self.feat = self.feat
+            df = pickle.load(f)
+        self.feat = np.array(df)
+        self.feat_nameV.append(df.columns)
         self.dataV.append(self.feat)
         self.data_basenameV.append(os.path.basename(self.data_path))
         # self.data_browser.table.setRowCount(self.data_id+1)
         # self.data_browser.table.setItem(0, self.data_id, QG.QTableWidgetItem(self.data_path))
         self.item = QG.QStandardItem(self.data_path)
         self.data_browser.model.appendRow(self.item)
-
 
         self.update_scatter_cb_edited()
         self.update_feat_cb_edited()
@@ -270,7 +262,6 @@ class mfcc_analysis(QG.QMainWindow):
             tab.curve.setData(x/4/60/60, feat, pen=tab.color+'99')
         else:
             tab.curve.clear()
-
 
     def feat_change_color_edited(self):
         btn = self.sender()
