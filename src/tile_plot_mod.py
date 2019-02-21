@@ -1,5 +1,5 @@
 '''
-sub_plot_mod
+tile_plot_mod
 '''
 
 import sys
@@ -8,7 +8,6 @@ import PyQt4.QtGui as QG
 import PyQt4.QtCore as QC
 import pyqtgraph as pg
 pg.setConfigOption('antialias', True)
-import pickle
 
 
 
@@ -17,35 +16,36 @@ feat_name = ['zcr','energy','energy_entropy','spectral_centroid','spectral_sprea
              'chroma_1','chroma_2','chroma_3','chroma_4','chroma_5','chroma_6','chroma_7','chroma_8','chroma_9','chroma_10','chroma_11','chroma_12','chroma_std']
 
 
-class sub_plot_mod(QG.QWidget):
+class tile_plot_mod(QG.QWidget):
     def __init__(self, parent=None):
         self.tabV = []
         self.tab_id = -1
 
-        super(sub_plot_mod, self).__init__(parent)  # superclassのコンストラクタを使用。
-        self.setWindowTitle("sub_plot")
+        super(tile_plot_mod, self).__init__(parent)  # superclassのコンストラクタを使用。
+        self.setWindowTitle("tile_plot")
 
         # graph
-        self.w_sub_plot = pg.GraphicsWindow()
-        self.w_sub_plot.resize(1300, 1000)
-        self.w_sub_plot.setBackground('#FFFFFF00')
+        self.w_tile_plot = pg.GraphicsWindow()
+        self.w_tile_plot.resize(1000, 1500)
+        self.w_tile_plot.setBackground('#FFFFFF00')
         self.plots = []
-        for idx, feat in enumerate(feat_name):
-            self.plots.append(self.w_sub_plot.addPlot(title=feat))
+        self.titles = ['class'+str(i) for i in range(40)]
+        for idx, title in enumerate(self.titles):
+            self.plots.append(self.w_tile_plot.addPlot(title=title))
             self.plots[idx].showGrid(x=True, y=True, alpha=0.7)
-            if (1+idx)%6 == 0:
-                self.w_sub_plot.nextRow()
-
+            self.plots[idx].addLegend()
+            if (1+idx)%4 == 0:
+                self.w_tile_plot.nextRow()
 
         # wdiget
         self.btn0 = QG.QPushButton('add Plot')
         self.btn0.clicked.connect(self.add_Data)
-        self.btn0.clicked.connect(self.update_sub_cb)
+        self.btn0.clicked.connect(self.update_tile_cb)
         self.w_vbox0 = QG.QWidget()
         # self.hbox = QG.QHBoxLayout()
-        # self.hbox.addWidget(self.w_sub_plot)
+        # self.hbox.addWidget(self.w_tile_plot)
         self.scrollArea = QG.QScrollArea()
-        self.scrollArea.setWidget(self.w_sub_plot)
+        self.scrollArea.setWidget(self.w_tile_plot)
         # self.scrollArea.setWidget(self.hbox)
         self.btn_zoom_in = QG.QPushButton('ZoomIn')
         self.btn_zoom_in.clicked.connect(self.zoom_in)
@@ -74,7 +74,7 @@ class sub_plot_mod(QG.QWidget):
         self.vbox0.addLayout(self.hbox0)
         self.w_vbox0.setLayout(self.vbox0)
         self.hsplitter0 = QG.QSplitter(QC.Qt.Vertical)
-        # self.hsplitter0.addWidget(self.w_sub_plot)
+        # self.hsplitter0.addWidget(self.w_tile_plot)
         self.hsplitter0.addWidget(self.scrollArea)
         self.hsplitter0.addWidget(self.w_vbox0)
         self.hsplitter0.setSizes([400, 10])
@@ -93,46 +93,46 @@ class sub_plot_mod(QG.QWidget):
         self.tab.addTab(self.tab_new, 'Tab--'+str(id))
 
         # event
-        self.tab_new.cb2.currentIndexChanged.connect(self.sub_setting_update)
-        self.tab_new.btn.clicked.connect(self.sub_setting_update)
-        self.tab_new.le0.editingFinished.connect(self.sub_setting_update)
-        self.tab_new.le1.editingFinished.connect(self.sub_setting_update)
-        self.tab_new.btn_color.clicked.connect(self.sub_change_color)
-        self.tab_new.btn_color.clicked.connect(self.sub_setting_update)
-        self.tab_new.check.stateChanged.connect(self.sub_setting_update)
-        self.tab_new.btn_doit.clicked.connect(self.sub_doit)
+        self.tab_new.cb2.currentIndexChanged.connect(self.tile_setting_update)
+        self.tab_new.btn.clicked.connect(self.tile_setting_update)
+        self.tab_new.le0.editingFinished.connect(self.tile_setting_update)
+        self.tab_new.le1.editingFinished.connect(self.tile_setting_update)
+        self.tab_new.btn_color.clicked.connect(self.tile_change_color)
+        self.tab_new.btn_color.clicked.connect(self.tile_setting_update)
+        self.tab_new.check.stateChanged.connect(self.tile_setting_update)
+        self.tab_new.btn_doit.clicked.connect(self.tile_doit)
         self.tab_new.btn.clicked.connect(self.zoom_in)
 
         # plotitem
         self.tab_new.curves = []
-        for idx in range(34):
+        for idx in range(40):
             self.tab_new.curves.append(self.plots[idx].plot())
 
-
         # update comnobox
-        self.update_sub_cb()
+        self.update_tile_cb()
 
     def zoom_out(self):
-        size = self.w_sub_plot.size()
+        size = self.w_tile_plot.size()
         w = size.width()
         h = size.height()
-        self.w_sub_plot.resize(w-30, h-30)
+        self.w_tile_plot.resize(w-30, h-30)
 
     def zoom_in(self):
-        size = self.w_sub_plot.size()
+        size = self.w_tile_plot.size()
         w = size.width()
         h = size.height()
-        self.w_sub_plot.resize(w+30, h+30)
+        self.w_tile_plot.resize(w+30, h+30)
 
+    def tile_setting_update(self):
+        pass
 
+    def tile_change_color(self):
+        pass
 
-    def sub_setting_update(self):
+    def update_tile_cb(self):
         pass
-    def sub_change_color(self):
-        pass
-    def update_sub_cb(self):
-        pass
-    def sub_doit(self):
+
+    def tile_doit(self):
         pass
 
 
@@ -176,13 +176,10 @@ class w_tab(QG.QWidget):
         self.vbox0.addWidget(self.btn)
         self.setLayout(self.vbox0)
 
-
-
-
 def main():
     app = QG.QApplication(sys.argv)
 
-    ui = sub_plot_mod()
+    ui = tile_plot_mod()
     ui.add_Data()
     ui.show()
 

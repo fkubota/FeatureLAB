@@ -40,15 +40,14 @@ class mfcc_analysis(QG.QMainWindow):
         self.hist = -1
         self.w_hist_plotV = []
 
-        # sub_plot
-        self.sub = -1
-        self.w_sub_plotV = []
+        # tile_plot
+        self.tile = -1
+        self.w_tile_plotV = []
 
         # data_browser
         self.data_id = -1
         self.dataV = []
         self.data_basenameV = []
-
 
         # constructor
         super(mfcc_analysis, self).__init__(parent)  # superclassのコンストラクタを使用。
@@ -59,17 +58,17 @@ class mfcc_analysis(QG.QMainWindow):
         # tool bar
         self.add_scatter = QG.QAction(QG.QIcon(script_path+'/../icon_file/plus_icon2.png'), 'scatter', self)
         self.add_feat = QG.QAction(QG.QIcon(script_path+'/../icon_file/plus_icon2.png'), 'feature', self)
-        self.add_hist = QG.QAction(QG.QIcon(script_path+'/../icon_file/plus_icon2.png'), 'feature', self)
-        self.add_sub = QG.QAction(QG.QIcon(script_path+'/../icon_file/plus_icon2.png'), 'feature', self)
+        self.add_hist = QG.QAction(QG.QIcon(script_path+'/../icon_file/plus_icon2.png'), 'histogram', self)
+        self.add_tile = QG.QAction(QG.QIcon(script_path+'/../icon_file/plus_icon2.png'), 'tile plot', self)
         self.add_scatter.triggered.connect(self.show_scatter)
         self.add_feat.triggered.connect(self.show_feat_plot)
         self.add_hist.triggered.connect(self.show_hist)
-        self.add_sub.triggered.connect(self.show_sub_plot)
+        self.add_tile.triggered.connect(self.show_tile_plot)
         self.toolbar = self.addToolBar("")
         self.toolbar.addAction(self.add_scatter)
         self.toolbar.addAction(self.add_feat)
         self.toolbar.addAction(self.add_hist)
-        self.toolbar.addAction(self.add_sub)
+        self.toolbar.addAction(self.add_tile)
 
         # statusbar
         self.mem = psutil.virtual_memory()
@@ -102,7 +101,6 @@ class mfcc_analysis(QG.QMainWindow):
 
         # self.get_data()
 
-
     def timer_event(self):
         self.mem = psutil.virtual_memory()
         mem0 = self.mem.total/10**9
@@ -130,9 +128,7 @@ class mfcc_analysis(QG.QMainWindow):
         self.update_scatter_cb_edited()
         self.update_feat_cb_edited()
         self.update_hist_cb_edited()
-        self.update_sub_cb_edited()
-
-
+        self.update_tile_cb_edited()
 
     def show_scatter(self):
         self.scatter += 1
@@ -188,6 +184,7 @@ class mfcc_analysis(QG.QMainWindow):
         self.lastClicked = points
 
     def setting_update_edited(self):
+        print('setting_update_edited')
         tab = self.sender().parent()
         # print(tab.parent().parent().parent())
         # print(tab.parent().parent().parent().parent())
@@ -199,24 +196,40 @@ class mfcc_analysis(QG.QMainWindow):
         check = tab.check
         step = int(tab.le_scatter0.text())
         data_id = tab.cb_scatter2.currentIndex()
-        # feat0 = self.feat[::step, int(tab.cb_scatter0.currentIndex())]
-        # feat1 = self.feat[::step, int(tab.cb_scatter1.currentIndex())]
-        # scatter.setPoints(feat0, feat1, brush=tab.color+'32')
+        feat0_id = tab.cb_scatter0.currentIndex()
+        feat1_id = tab.cb_scatter1.currentIndex()
 
-        if check.isChecked() :
+        # disconnect
+        tab.cb_scatter0.currentIndexChanged.disconnect(self.setting_update_edited)
+        tab.cb_scatter1.currentIndexChanged.disconnect(self.setting_update_edited)
+        tab.cb_scatter2.currentIndexChanged.disconnect(self.setting_update_edited)
+
+        # feat name update
+        tab.cb_scatter0.clear()
+        tab.cb_scatter1.clear()
+        tab.cb_scatter0.addItems(self.feat_nameV[data_id])
+        tab.cb_scatter1.addItems(self.feat_nameV[data_id])
+        tab.cb_scatter0.setCurrentIndex(feat0_id)
+        tab.cb_scatter1.setCurrentIndex(feat1_id)
+
+        if check.isChecked():
             feat0 = self.dataV[data_id][::step, int(tab.cb_scatter0.currentIndex())]
             feat1 = self.dataV[data_id][::step, int(tab.cb_scatter1.currentIndex())]
             scatter.setPoints(feat0, feat1, brush=tab.color+'32')
         else:
             scatter.clear()
 
+        # reconnect
+        tab.cb_scatter0.currentIndexChanged.connect(self.setting_update_edited)
+        tab.cb_scatter1.currentIndexChanged.connect(self.setting_update_edited)
+        tab.cb_scatter2.currentIndexChanged.connect(self.setting_update_edited)
+
     def change_color_edited(self):
         btn = self.sender()
         tab = self.sender().parent()
         color = QG.QColorDialog.getColor()
         tab.color = color.name()
-        btn.setStyleSheet("background-color: "+ tab.color)
-
+        btn.setStyleSheet("background-color: " + tab.color)
 
     def update_scatter_cb_edited(self):
         # print(self.sender())
@@ -226,7 +239,7 @@ class mfcc_analysis(QG.QMainWindow):
                 idx = w_scatter.tabV[tab_idx].cb_scatter2.currentIndex()
                 w_scatter.tabV[tab_idx].cb_scatter2.clear()
                 w_scatter.tabV[tab_idx].cb_scatter2.addItems(self.data_basenameV)
-                if idx!=-1:
+                if idx != -1:
                     w_scatter.tabV[tab_idx].cb_scatter2.setCurrentIndex(idx)
                 w_scatter.tabV[tab_idx].cb_scatter2.update()
 
@@ -254,7 +267,18 @@ class mfcc_analysis(QG.QMainWindow):
         check = tab.check
         step = int(tab.le0.text())
         data_id = tab.cb2.currentIndex()
-        if check.isChecked() :
+        feat_id = tab.cb0.currentIndex()
+
+        # disconnect
+        tab.cb0.currentIndexChanged.disconnect(self.feat_setting_update_edited)
+        tab.cb2.currentIndexChanged.disconnect(self.feat_setting_update_edited)
+
+        # feat name update
+        tab.cb0.clear()
+        tab.cb0.addItems(self.feat_nameV[data_id])
+        tab.cb0.setCurrentIndex(feat_id)
+
+        if check.isChecked():
             length = len(self.dataV[data_id])
             x = np.arange(0, length, 1)
             x = x[::step]
@@ -262,6 +286,10 @@ class mfcc_analysis(QG.QMainWindow):
             tab.curve.setData(x/4/60/60, feat, pen=tab.color+'99')
         else:
             tab.curve.clear()
+
+        # reconnect
+        tab.cb0.currentIndexChanged.connect(self.feat_setting_update_edited)
+        tab.cb2.currentIndexChanged.connect(self.feat_setting_update_edited)
 
     def feat_change_color_edited(self):
         btn = self.sender()
@@ -306,7 +334,18 @@ class mfcc_analysis(QG.QMainWindow):
         step = int(tab.le0.text())
         bins_num = int(tab.le1.text())
         data_id = tab.cb2.currentIndex()
-        if check.isChecked() :
+        feat_id = tab.cb0.currentIndex()
+
+        # disconnect
+        tab.cb0.currentIndexChanged.disconnect(self.hist_setting_update_edited)
+        tab.cb2.currentIndexChanged.disconnect(self.hist_setting_update_edited)
+
+        # feat name update
+        tab.cb0.clear()
+        tab.cb0.addItems(self.feat_nameV[data_id])
+        tab.cb0.setCurrentIndex(feat_id)
+
+        if check.isChecked():
             feat = self.dataV[data_id][::step, int(tab.cb0.currentIndex())]
             hist, bins = np.histogram(feat, bins=bins_num)
             # X = []
@@ -315,6 +354,12 @@ class mfcc_analysis(QG.QMainWindow):
             tab.plot_hist.setData(bins, hist, pen=tab.color+'ff', fillBrush=tab.color+'50', fillLevel=0, stepMode=True)
         else:
             tab.plot_hist.clear()
+
+        # reconnect
+        tab.cb0.currentIndexChanged.connect(self.hist_setting_update_edited)
+        tab.cb2.currentIndexChanged.connect(self.hist_setting_update_edited)
+
+
 
     def hist_change_color_edited(self):
         btn = self.sender()
@@ -334,63 +379,59 @@ class mfcc_analysis(QG.QMainWindow):
                     w_hist.tabV[tab_idx].cb2.setCurrentIndex(idx)
                 w_hist.tabV[tab_idx].cb2.update()
 
-    def show_sub_plot(self):
-        self.sub += 1
-        id = self.sub
-        self.w_sub_plotV.append(sp.sub_plot_mod(self))
-        w_sub_plot = self.w_sub_plotV[id]
-        w_sub_plot.id = self.sub
-        w_sub_plot.setWindowTitle('histogram plot : ' + str(id))
+    def show_tile_plot(self):
+        self.tile += 1
+        id = self.tile
+        self.w_tile_plotV.append(sp.tile_plot_mod(self))
+        w_tile_plot = self.w_tile_plotV[id]
+        w_tile_plot.id = self.tile
+        w_tile_plot.setWindowTitle('histogram plot : ' + str(id))
 
         # overload method
-        w_sub_plot.sub_setting_update = self.sub_setting_update_edited
-        w_sub_plot.sub_change_color = self.sub_change_color_edited
-        w_sub_plot.update_sub_cb = self.update_sub_cb_edited
-        w_sub_plot.sub_doit = self.sub_doit_edited
+        w_tile_plot.tile_setting_update = self.tile_setting_update_edited
+        w_tile_plot.tile_change_color = self.tile_change_color_edited
+        w_tile_plot.update_tile_cb = self.update_tile_cb_edited
+        w_tile_plot.tile_doit = self.tile_doit_edited
 
-        w_mdi = self.mdi.addSubWindow(w_sub_plot)
+        w_mdi = self.mdi.addSubWindow(w_tile_plot)
         w_mdi.resize(350, 500)
-        w_sub_plot.add_Data()
-        self.update_sub_cb_edited()
+        w_tile_plot.add_Data()
+        self.update_tile_cb_edited()
         w_mdi.show()
 
 
 
-    def sub_setting_update_edited(self):
+    def tile_setting_update_edited(self):
         pass
-    def sub_change_color_edited(self):
+    def tile_change_color_edited(self):
         btn = self.sender()
         tab = self.sender().parent()
         color = QG.QColorDialog.getColor()
         tab.color = color.name()
         btn.setStyleSheet("background-color: "+ tab.color)
 
-    def update_sub_cb_edited(self):
-        for sub_idx in range(len(self.w_sub_plotV)):
-            w_sub = self.w_sub_plotV[sub_idx]
-            for tab_idx in range(len(w_sub.tabV)):
-                idx = w_sub.tabV[tab_idx].cb2.currentIndex()
-                w_sub.tabV[tab_idx].cb2.clear()
-                w_sub.tabV[tab_idx].cb2.addItems(self.data_basenameV)
+    def update_tile_cb_edited(self):
+        for tile_idx in range(len(self.w_tile_plotV)):
+            w_tile = self.w_tile_plotV[tile_idx]
+            for tab_idx in range(len(w_tile.tabV)):
+                idx = w_tile.tabV[tab_idx].cb2.currentIndex()
+                w_tile.tabV[tab_idx].cb2.clear()
+                w_tile.tabV[tab_idx].cb2.addItems(self.data_basenameV)
                 if idx!= -1:
-                    w_sub.tabV[tab_idx].cb2.setCurrentIndex(idx)
-                w_sub.tabV[tab_idx].cb2.update()
+                    w_tile.tabV[tab_idx].cb2.setCurrentIndex(idx)
+                w_tile.tabV[tab_idx].cb2.update()
 
-    def sub_doit_edited(self):
+    def tile_doit_edited(self):
         a = self.sender().parent().parent().parent()
         win = a.parent().parent().parent()
-        # win.w_sub_plot.resize(100, 100)
+        # win.w_tile_plot.resize(100, 100)
         for tab in win.tabV:
             step = int(tab.le0.text())
             data_id = tab.cb2.currentIndex()
-            for idx, feat_name in enumerate(self.feat_names):
+            for idx, feat_name in enumerate(self.feat_nameV[data_id]):
                 feat0 = self.dataV[data_id][::step, idx]
-                tab.curves[idx].setData(feat0, pen=tab.color+'99')
+                tab.curves[idx].setData(feat0, pen=tab.color+'99', name='aaaaa')
 
-
-
-
-        pass
         # tab = self.sender().parent()
 
         # check = tab.check

@@ -28,7 +28,6 @@ class scatter_mod(QG.QWidget):
         # self.resize(100, 200)
         # self.mdi.addSubWindow(self.w_scatter)
 
-
         # graph
         self.w_plot_scatter = pg.GraphicsWindow()
         self.w_plot_scatter.resize(300, 200)
@@ -68,7 +67,6 @@ class scatter_mod(QG.QWidget):
         self.setLayout(self.vbox1)
 
         self.show()
-
 
     def add_data(self):
         self.tab_id += 1
@@ -129,12 +127,12 @@ class scatter_mod(QG.QWidget):
         #         p.setPen('b', width=2)
         # self.lastClicked = points
 
-
-
     def setting_update(self):
         pass
+
     def change_color(self):
         pass
+
     def update_scatter_cb(self):
         pass
 
@@ -162,9 +160,9 @@ class w_tab(QG.QWidget):
         self.le_scatter0 = (QG.QLineEdit(str(100)))
         self.le_scatter0.setFixedWidth(50)
         self.cb_scatter0 = QG.QComboBox()
-        self.cb_scatter0.addItems(feat_name)
+        # self.cb_scatter0.addItems(feat_name)
         self.cb_scatter1 = QG.QComboBox()
-        self.cb_scatter1.addItems(feat_name)
+        # self.cb_scatter1.addItems(feat_name)
         self.cb_scatter2 = QG.QComboBox()
         self.cb_scatter2.setSizePolicy(QG.QSizePolicy.Expanding, 20)
         self.check = QG.QCheckBox()
