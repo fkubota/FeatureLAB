@@ -21,9 +21,9 @@ from src import tile_plot_mod as sp
 
 class mfcc_analysis(QG.QMainWindow):
     def __init__(self, parent=None):
-        self.feat_names = ['zcr','energy','energy_entropy','spectral_centroid','spectral_spread','spectral_entropy','spectral_flux','spectral_rolloff',
-                            'mfcc_1','mfcc_2','mfcc_3','mfcc_4','mfcc_5','mfcc_6','mfcc_7','mfcc_8','mfcc_9','mfcc_10','mfcc_11','mfcc_12','mfcc_13',
-                            'chroma_1','chroma_2','chroma_3','chroma_4','chroma_5','chroma_6','chroma_7','chroma_8','chroma_9','chroma_10','chroma_11','chroma_12','chroma_std']
+        # self.feat_names = ['zcr','energy','energy_entropy','spectral_centroid','spectral_spread','spectral_entropy','spectral_flux','spectral_rolloff',
+        #                     'mfcc_1','mfcc_2','mfcc_3','mfcc_4','mfcc_5','mfcc_6','mfcc_7','mfcc_8','mfcc_9','mfcc_10','mfcc_11','mfcc_12','mfcc_13',
+        #                     'chroma_1','chroma_2','chroma_3','chroma_4','chroma_5','chroma_6','chroma_7','chroma_8','chroma_9','chroma_10','chroma_11','chroma_12','chroma_std']
 
         self.feat_nameV = []
 
@@ -51,6 +51,10 @@ class mfcc_analysis(QG.QMainWindow):
 
         # constructor
         super(mfcc_analysis, self).__init__(parent)  # superclassのコンストラクタを使用。
+        # f = open("./../myStyle_BlackBlue.txt", "r")
+        # style = f.read()
+        # self.setStyleSheet(style)
+        
         self.setWindowTitle('MFCC analysis')
         self.resize(1000, 650)
         self.move(100, 100)
@@ -283,7 +287,12 @@ class mfcc_analysis(QG.QMainWindow):
             x = np.arange(0, length, 1)
             x = x[::step]
             feat = self.dataV[data_id][::step, int(tab.cb0.currentIndex())]
-            tab.curve.setData(x/4/60/60, feat, pen=tab.color+'99')
+            tab.curve.setData(x/4/60/60, feat, pen=tab.color+'99', name='aaa')
+
+            # legend = self.p0_feat.addLegend()
+            # print(tab.cb0.currentIndex())
+            tab.legend.addItem(tab.curve, name=self.feat_nameV[data_id][tab.cb0.currentIndex()])
+
         else:
             tab.curve.clear()
 

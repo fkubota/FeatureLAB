@@ -11,9 +11,9 @@ pg.setConfigOption('antialias', True)
 
 
 
-feat_name = ['zcr','energy','energy_entropy','spectral_centroid','spectral_spread','spectral_entropy','spectral_flux','spectral_rolloff',
-             'mfcc_1','mfcc_2','mfcc_3','mfcc_4','mfcc_5','mfcc_6','mfcc_7','mfcc_8','mfcc_9','mfcc_10','mfcc_11','mfcc_12','mfcc_13',
-             'chroma_1','chroma_2','chroma_3','chroma_4','chroma_5','chroma_6','chroma_7','chroma_8','chroma_9','chroma_10','chroma_11','chroma_12','chroma_std']
+# feat_name = ['zcr','energy','energy_entropy','spectral_centroid','spectral_spread','spectral_entropy','spectral_flux','spectral_rolloff',
+#              'mfcc_1','mfcc_2','mfcc_3','mfcc_4','mfcc_5','mfcc_6','mfcc_7','mfcc_8','mfcc_9','mfcc_10','mfcc_11','mfcc_12','mfcc_13',
+#              'chroma_1','chroma_2','chroma_3','chroma_4','chroma_5','chroma_6','chroma_7','chroma_8','chroma_9','chroma_10','chroma_11','chroma_12','chroma_std']
 
 
 class tile_plot_mod(QG.QWidget):
@@ -126,6 +126,7 @@ class tile_plot_mod(QG.QWidget):
     def tile_setting_update(self):
         pass
 
+<<<<<<< HEAD
     def tile_change_color(self):
         pass
 
@@ -133,6 +134,15 @@ class tile_plot_mod(QG.QWidget):
         pass
 
     def tile_doit(self):
+=======
+    def sub_change_color(self):
+        pass
+
+    def update_sub_cb(self):
+        pass
+
+    def sub_doit(self):
+>>>>>>> master
         pass
 
 
