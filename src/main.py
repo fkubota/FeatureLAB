@@ -52,6 +52,10 @@ class mfcc_analysis(QG.QMainWindow):
 
         # constructor
         super(mfcc_analysis, self).__init__(parent)  # superclassのコンストラクタを使用。
+        # f = open("./../myStyle_BlackBlue.txt", "r")
+        # style = f.read()
+        # self.setStyleSheet(style)
+        
         self.setWindowTitle('MFCC analysis')
         self.resize(1000, 650)
         self.move(100, 100)
