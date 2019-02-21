@@ -126,7 +126,6 @@ class tile_plot_mod(QG.QWidget):
     def tile_setting_update(self):
         pass
 
-<<<<<<< HEAD
     def tile_change_color(self):
         pass
 
@@ -134,16 +133,12 @@ class tile_plot_mod(QG.QWidget):
         pass
 
     def tile_doit(self):
-=======
-    def sub_change_color(self):
         pass
 
-    def update_sub_cb(self):
+    def tile_change_color(self):
         pass
 
-    def sub_doit(self):
->>>>>>> master
-        pass
+
 
 
 class w_tab(QG.QWidget):
