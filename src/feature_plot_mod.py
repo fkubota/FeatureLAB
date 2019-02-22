@@ -85,7 +85,7 @@ class feature_plot_mod(QG.QWidget):
 
         # plotitem
         self.tab_new.curve = self.p0_feat.plot()
-        self.tab_new.legend = self.p0_feat.addLegend()
+        # self.tab_new.legend = self.p0_feat.addLegend()
 
         # update comnobox
         self.update_feat_cb()

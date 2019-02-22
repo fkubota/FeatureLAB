@@ -293,7 +293,7 @@ class FeatureLAB(QG.QMainWindow):
             x = np.arange(0, length, 1)
             x = x[::step]
             feat = self.dataV[data_id][::step, int(tab.cb0.currentIndex())]
-            tab.curve.setData(x/4/60/60, feat, pen=tab.color+'99', name='aaa')
+            # tab.curve.setData(x/4/60/60, feat, pen=tab.color+'99', name='aaa')
 
             # legend = self.p0_feat.addLegend()
             # print(tab.cb0.currentIndex())
