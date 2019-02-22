@@ -13,6 +13,7 @@ import PyQt4.QtGui as QG
 import PyQt4.QtCore as QC
 import pickle
 import pyqtgraph as pg
+import pyqtgraph.opengl as gl
 from src import data_browser as db
 from src import scatter_mod as sctr
 from src import feature_plot_mod as fp
