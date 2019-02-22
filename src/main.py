@@ -8,6 +8,7 @@ script_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(script_path + '/../'))
 import psutil
 import numpy as np
+import pandas as pd
 import PyQt4.QtGui as QG
 import PyQt4.QtCore as QC
 import pickle
@@ -19,7 +20,7 @@ from src import histogram_mod as histogram
 from src import tile_plot_mod as sp
 
 
-class mfcc_analysis(QG.QMainWindow):
+class FeatureLAB(QG.QMainWindow):
     def __init__(self, parent=None):
         # self.feat_names = ['zcr','energy','energy_entropy','spectral_centroid','spectral_spread','spectral_entropy','spectral_flux','spectral_rolloff',
         #                     'mfcc_1','mfcc_2','mfcc_3','mfcc_4','mfcc_5','mfcc_6','mfcc_7','mfcc_8','mfcc_9','mfcc_10','mfcc_11','mfcc_12','mfcc_13',
@@ -50,12 +51,12 @@ class mfcc_analysis(QG.QMainWindow):
         self.data_basenameV = []
 
         # constructor
-        super(mfcc_analysis, self).__init__(parent)  # superclassのコンストラクタを使用。
+        super(FeatureLAB, self).__init__(parent)  # superclassのコンストラクタを使用。
         # f = open("./../myStyle_BlackBlue.txt", "r")
         # style = f.read()
         # self.setStyleSheet(style)
         
-        self.setWindowTitle('MFCC analysis')
+        self.setWindowTitle('FeatureLAB')
         self.resize(1000, 650)
         self.move(100, 100)
 
@@ -118,8 +119,13 @@ class mfcc_analysis(QG.QMainWindow):
     def get_data(self):
         self.data_id += 1
         self.data_path = QG.QFileDialog.getOpenFileName(self, 'Open File', '/home/')
-        with open(self.data_path, mode='rb') as f:
-            df = pickle.load(f)
+
+        # with open(self.data_path, mode='rb') as f:
+        #     df = pickle.load(f)
+
+        # csv のみ許可
+        df = pd.read_csv(self.data_path)
+
         self.feat = np.array(df)
         self.feat_nameV.append(df.columns)
         self.dataV.append(self.feat)
@@ -412,6 +418,7 @@ class mfcc_analysis(QG.QMainWindow):
 
     def tile_setting_update_edited(self):
         pass
+
     def tile_change_color_edited(self):
         btn = self.sender()
         tab = self.sender().parent()
@@ -439,7 +446,8 @@ class mfcc_analysis(QG.QMainWindow):
             data_id = tab.cb2.currentIndex()
             for idx, feat_name in enumerate(self.feat_nameV[data_id]):
                 feat0 = self.dataV[data_id][::step, idx]
-                tab.curves[idx].setData(feat0, pen=tab.color+'99', name='aaaaa')
+                tab.curves[idx].setData(feat0, pen=tab.color+'99')
+                win.plots[idx].setTitle(title=feat_name)
 
         # tab = self.sender().parent()
 
@@ -457,7 +465,7 @@ class mfcc_analysis(QG.QMainWindow):
 def main():
     app = QG.QApplication(sys.argv)
 
-    ui = mfcc_analysis()
+    ui = FeatureLAB()
     ui.show()
 
     sys.exit(app.exec_())

@@ -31,9 +31,9 @@ class tile_plot_mod(QG.QWidget):
         self.plots = []
         self.titles = ['class'+str(i) for i in range(40)]
         for idx, title in enumerate(self.titles):
-            self.plots.append(self.w_tile_plot.addPlot(title=title))
+            self.plots.append(self.w_tile_plot.addPlot())
             self.plots[idx].showGrid(x=True, y=True, alpha=0.7)
-            self.plots[idx].addLegend()
+            # self.plots[idx].addLegend()
             if (1+idx)%4 == 0:
                 self.w_tile_plot.nextRow()
 
