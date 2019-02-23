@@ -415,8 +415,6 @@ class FeatureLAB(QG.QMainWindow):
         self.update_tile_cb_edited()
         w_mdi.show()
 
-
-
     def tile_setting_update_edited(self):
         pass
 
@@ -456,11 +454,6 @@ class FeatureLAB(QG.QMainWindow):
         # step = int(tab.le0.text())
         # data_id = tab.cb2.currentIndex()
         # if check.isChecked() :
-
-
-
-
-
 
 
 def main():
