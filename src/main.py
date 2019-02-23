@@ -16,6 +16,7 @@ import pyqtgraph as pg
 import pyqtgraph.opengl as gl
 from src import data_browser as db
 from src import scatter_mod as sctr
+from src import scatter_3d_mod as sctr_3d
 from src import feature_plot_mod as fp
 from src import histogram_mod as histogram
 from src import tile_plot_mod as sp
@@ -33,6 +34,10 @@ class FeatureLAB(QG.QMainWindow):
         self.scatter = -1
         self.w_scatterV = []
         self.lastClicked = []
+
+        # scatter_3d
+        self.scatter_3d = -1
+        self.w_scatter_3d_plotV = []
 
         # feat_plot
         self.feat_plot = -1
@@ -63,15 +68,18 @@ class FeatureLAB(QG.QMainWindow):
 
         # tool bar
         self.add_scatter = QG.QAction(QG.QIcon(script_path+'/../icon_file/plus_icon2.png'), 'scatter', self)
+        self.add_scatter_3d = QG.QAction(QG.QIcon(script_path+'/../icon_file/plus_icon2.png'), 'scatter_3d', self)
         self.add_feat = QG.QAction(QG.QIcon(script_path+'/../icon_file/plus_icon2.png'), 'feature', self)
         self.add_hist = QG.QAction(QG.QIcon(script_path+'/../icon_file/plus_icon2.png'), 'histogram', self)
         self.add_tile = QG.QAction(QG.QIcon(script_path+'/../icon_file/plus_icon2.png'), 'tile plot', self)
         self.add_scatter.triggered.connect(self.show_scatter)
+        self.add_scatter_3d.triggered.connect(self.show_scatter_3d)
         self.add_feat.triggered.connect(self.show_feat_plot)
         self.add_hist.triggered.connect(self.show_hist)
         self.add_tile.triggered.connect(self.show_tile_plot)
         self.toolbar = self.addToolBar("")
         self.toolbar.addAction(self.add_scatter)
+        self.toolbar.addAction(self.add_scatter_3d)
         self.toolbar.addAction(self.add_feat)
         self.toolbar.addAction(self.add_hist)
         self.toolbar.addAction(self.add_tile)
@@ -137,6 +145,7 @@ class FeatureLAB(QG.QMainWindow):
         self.data_browser.model.appendRow(self.item)
 
         self.update_scatter_cb_edited()
+        self.update_scatter_3d_cb_edited()
         self.update_feat_cb_edited()
         self.update_hist_cb_edited()
         self.update_tile_cb_edited()
@@ -254,6 +263,92 @@ class FeatureLAB(QG.QMainWindow):
                     w_scatter.tabV[tab_idx].cb_scatter2.setCurrentIndex(idx)
                 w_scatter.tabV[tab_idx].cb_scatter2.update()
 
+    def show_scatter_3d(self):
+        self.scatter_3d += 1
+        id = self.scatter_3d
+        self.w_scatter_3d_plotV.append(sctr_3d.scatter_3d_mod(self))
+        w_scatter_3d_plot = self.w_scatter_3d_plotV[id]
+        w_scatter_3d_plot.id = self.scatter_3d
+        w_scatter_3d_plot.setWindowTitle('scatter_3dogram plot : ' + str(id))
+
+        # overload method
+        w_scatter_3d_plot.scatter_3d_setting_update = self.scatter_3d_setting_update_edited
+        w_scatter_3d_plot.scatter_3d_change_color = self.scatter_3d_change_color_edited
+        w_scatter_3d_plot.update_scatter_3d_cb = self.update_scatter_3d_cb_edited
+
+        w_mdi = self.mdi.addSubWindow(w_scatter_3d_plot)
+        w_mdi.resize(350, 500)
+        w_scatter_3d_plot.add_Data()
+        self.update_scatter_3d_cb_edited()
+        w_mdi.show()
+
+    def scatter_3d_setting_update_edited(self):
+        tab = self.sender().parent()
+        check = tab.check
+        step = int(tab.le0.text())
+        point_size = int(tab.le_point_size.text())
+        data_id = tab.cb2.currentIndex()
+        feat0_id = tab.cb_feat0.currentIndex()
+        feat1_id = tab.cb_feat1.currentIndex()
+        feat2_id = tab.cb_feat2.currentIndex()
+
+        # disconnect
+        tab.cb2.currentIndexChanged.disconnect(self.scatter_3d_setting_update_edited)
+        tab.cb_feat0.currentIndexChanged.disconnect(self.scatter_3d_setting_update_edited)
+        tab.cb_feat1.currentIndexChanged.disconnect(self.scatter_3d_setting_update_edited)
+        tab.cb_feat2.currentIndexChanged.disconnect(self.scatter_3d_setting_update_edited)
+
+        # feat name update
+        tab.cb_feat0.clear()
+        tab.cb_feat1.clear()
+        tab.cb_feat2.clear()
+        tab.cb_feat0.addItems(self.feat_nameV[data_id])
+        tab.cb_feat1.addItems(self.feat_nameV[data_id])
+        tab.cb_feat2.addItems(self.feat_nameV[data_id])
+        tab.cb_feat0.setCurrentIndex(feat0_id)
+        tab.cb_feat1.setCurrentIndex(feat1_id)
+        tab.cb_feat2.setCurrentIndex(feat2_id)
+
+        if check.isChecked():
+            feat0 = self.dataV[data_id][::step, int(tab.cb_feat0.currentIndex())]
+            feat1 = self.dataV[data_id][::step, int(tab.cb_feat1.currentIndex())]
+            feat2 = self.dataV[data_id][::step, int(tab.cb_feat2.currentIndex())]
+            pos = np.array([feat0, feat1, feat2]).T
+            c = tab.color
+            color = np.array((int(c[1:3],16),int(c[3:5],16),int(c[5:7],16), 99)) / 255
+            color = np.array([[color] for _ in range(len(feat0))])
+            tab.scatter_3d_plot_item.setData(pos=pos, color=color, size=point_size)
+        else:
+            tab.scatter_3d_plot_item.setData(pos=None)
+
+        # reconnect
+        tab.cb2.currentIndexChanged.connect(self.scatter_3d_setting_update_edited)
+        tab.cb_feat0.currentIndexChanged.connect(self.scatter_3d_setting_update_edited)
+        tab.cb_feat1.currentIndexChanged.connect(self.scatter_3d_setting_update_edited)
+        tab.cb_feat2.currentIndexChanged.connect(self.scatter_3d_setting_update_edited)
+
+
+
+    def scatter_3d_change_color_edited(self):
+        btn = self.sender()
+        tab = self.sender().parent()
+        # print(tab.color, type(tab.color))
+        color = QG.QColorDialog.getColor()
+        tab.color = color.name()
+        # print(tab.color, type(tab.color))
+        btn.setStyleSheet("background-color: "+ tab.color)
+
+    def update_scatter_3d_cb_edited(self):
+        for scatter_3d_idx in range(len(self.w_scatter_3d_plotV)):
+            w_scatter_3d = self.w_scatter_3d_plotV[scatter_3d_idx]
+            for tab_idx in range(len(w_scatter_3d.tabV)):
+                idx = w_scatter_3d.tabV[tab_idx].cb2.currentIndex()
+                w_scatter_3d.tabV[tab_idx].cb2.clear()
+                w_scatter_3d.tabV[tab_idx].cb2.addItems(self.data_basenameV)
+                if idx!= -1:
+                    w_scatter_3d.tabV[tab_idx].cb2.setCurrentIndex(idx)
+                w_scatter_3d.tabV[tab_idx].cb2.update()
+
     def show_feat_plot(self):
         self.feat_plot += 1
         id = self.feat_plot
@@ -298,7 +393,7 @@ class FeatureLAB(QG.QMainWindow):
 
             # legend = self.p0_feat.addLegend()
             # print(tab.cb0.currentIndex())
-            tab.legend.addItem(tab.curve, name=self.feat_nameV[data_id][tab.cb0.currentIndex()])
+            # tab.legend.addItem(tab.curve, name=self.feat_nameV[data_id][tab.cb0.currentIndex()])
 
         else:
             tab.curve.clear()
