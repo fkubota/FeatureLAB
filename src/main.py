@@ -6,6 +6,7 @@ import sys
 import os
 script_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(script_path + '/../'))
+# sys.path.insert(0, os.path.join(script_path + '/../src'))
 import psutil
 import numpy as np
 import pandas as pd
@@ -14,12 +15,18 @@ import PyQt4.QtCore as QC
 import pickle
 import pyqtgraph as pg
 import pyqtgraph.opengl as gl
-from src import data_browser as db
-from src import scatter_mod as sctr
-from src import scatter_3d_mod as sctr_3d
-from src import feature_plot_mod as fp
-from src import histogram_mod as histogram
-from src import tile_plot_mod as sp
+# from src import data_browser as db
+# from src import scatter_mod as sctr
+# from src import scatter_3d_mod as sctr_3d
+# from src import feature_plot_mod as fp
+# from src import histogram_mod as histogram
+# from src import tile_plot_mod as sp
+import data_browser as db
+import scatter_mod as sctr
+import scatter_3d_mod as sctr_3d
+import feature_plot_mod as fp
+import histogram_mod as histogram
+import tile_plot_mod as sp
 
 
 class FeatureLAB(QG.QMainWindow):
